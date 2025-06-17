@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMB MGD</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      padding: 0 40px;
+    }
+    header {
+      background-color: #4EF3B6;
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .banner-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    .banner-section img {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      position: relative;
+    }
+    .header-buttons button {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #2980b9;
+      padding: 10px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .nav div {
+      color: white;
+      cursor: pointer;
+    }
+    .calculator, .customizer {
+      display: none;
+      position: absolute;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      width: 220px;
+      animation: aparecer 0.3s ease;
+      z-index: 10;
+    }
+    .calculator {
+      top: 60px;
+      left: 0;
+    }
+    .customizer {
+      top: 60px;
+      right: 0;
+    }
+    .calculator input {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .calculator .btns {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+    .calculator .btns button {
+      padding: 5px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+    .customizer ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .customizer li {
+      margin: 5px 0;
+    }
+    .dark-mode {
+      background-color: #222;
+      color: white;
+    }
+    @keyframes aparecer {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-fondo {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-contenido {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .cerrar {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 25px;
+      cursor: pointer;
+    }
+    input[type="text"], input[type="password"] {
+      width: 90%;
+      padding: 8px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 4px;
+    }
+    .switch-link {
+      margin-top: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+    }
+	  
+    h2 {
+      color: #2c3e50;
+      margin-top: 30px;
+    }
+    .section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: inline-block;
+      margin: 10px 10px 10px 0;
+    }
+    input[type="number"], input[type="text"] {
+      padding: 6px;
+      margin: 5px;
+      width: 100px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #e9ecef;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      margin: 5px 0;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    pre {
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 8px;
+      overflow: auto;
+    }
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+ html, body {
+  min-height: 100%;
+  font-family: sans-serif;
+  overflow-x: hidden;  /* evita scroll horizontal */
+  overflow-y: auto;    /* permite scroll vertical */
+}
+	  
+
+    .pantalla-bienvenida {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(270deg, #00c853, #1de9b6, #00c853);
+      background-size: 600% 600%;
+     animation: animarFondo 3s ease infinite;
+      z-index: 9999;
+    }
+
+    @keyframes animarFondo {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .mensaje {
+      font-size: 4em;
+      color: white;
+      text-transform: uppercase;
+      animation: bajarTexto 3s ease forwards;
+    }
+
+    @keyframes bajarTexto {
+      0% {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      40% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      60% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+
+.pantalla-bienvenida.ocultar {
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 3s;
+}
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+ .contenido {
+  opacity: 0;
+  animation: mostrarContenido 1s ease forwards;
+  animation-delay: 3s;
+}
+
+    @keyframes mostrarContenido {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+    <script>
+  function mostrarSeccion(id) {
+    const secciones = ['seccion-inicio', 'seccion-temario', 'seccion-calculadoras'];
+    secciones.forEach(seccion => {
+      const elemento = document.getElementById(seccion);
+      if (elemento) elemento.style.display = 'none';
+    });
+
+    const seccionMostrar = document.getElementById('seccion-' + id);
+    if (seccionMostrar) seccionMostrar.style.display = 'block';
+  }
+</script>
+<body>
+	 <div class="pantalla-bienvenida" id="bienvenida">
+    <div class="mensaje">¡Bienvenido!</div>
+  </div>
+  <script>
+    // Oculta la pantalla de bienvenida después de la animación del texto
+setTimeout(() => {
+  document.getElementById('bienvenida').classList.add('ocultar');
+}, 1000);
+  </script>
+  <header>
+	  <div class="banner-section">
+      <img src="../Imagenes/logo 2025.jpeg" alt="Logo" width="70" height="70">
+      <div>
+        <img src="../Imagenes/Calculadora.jpg" alt="Calculadora" width="61" height="70" onclick="toggleCalculator()">
+        <div id="calculator" class="calculator">
+          <input type="text" id="calc-display" readonly>
+          <div class="btns">
+            <button onclick="appendCalc('7')">7</button>
+            <button onclick="appendCalc('8')">8</button>
+            <button onclick="appendCalc('9')">9</button>
+            <button onclick="appendCalc('/')">/</button>
+            <button onclick="appendCalc('Math.sin(')">sin</button>
+            <button onclick="appendCalc('4')">4</button>
+            <button onclick="appendCalc('5')">5</button>
+            <button onclick="appendCalc('6')">6</button>
+            <button onclick="appendCalc('*')">*</button>
+            <button onclick="appendCalc('Math.cos(')">cos</button>
+            <button onclick="appendCalc('1')">1</button>
+            <button onclick="appendCalc('2')">2</button>
+            <button onclick="appendCalc('3')">3</button>
+            <button onclick="appendCalc('-')">-</button>
+            <button onclick="appendCalc('Math.tan(')">tan</button>
+            <button onclick="appendCalc('0')">0</button>
+            <button onclick="appendCalc('.')">.</button>
+            <button onclick="calcResult()">=</button>
+            <button onclick="appendCalc('+')">+</button>
+            <button onclick="clearCalc()">C</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-buttons">
+      <div>
+        <button onclick="toggleCustomizer()">Personalización</button>
+        <div id="customizer" class="customizer">
+          <ul>
+            <li><button onclick="toggleModo()">Modo Claro/Obscuro</button></li>
+            <li><button onclick="fondoAleatorio()">Fondo Aleatorio</button></li>
+            <li><button onclick="quitarFondo()">Quitar Fondo</button></li>
+			 <li><input type="file" accept="image/*" onchange="setFondo(this)"></li>
+          </ul>
+        </div>
+      </div>
+      <button id="btnSesion">Inicia sesión</button>
+    </div>
+  </header>
+<div class="nav">
+  <div onclick="mostrarSeccion('inicio')">Inicio</div>
+  <div onclick="mostrarSeccion('temario')">Temario</div>
+  <div onclick="mostrarSeccion('calculadoras')">Calculadoras</div>
+</div>
+
+  <div id="seccion-inicio" style="padding: 20px; display: block;"><h1><center><strong>INVESTIGACION DE OPERACIONES </strong></h1>
+      </blockquote>
+<div id="bannerImage"><center><img src="../Imagenes/umbatenco.jpeg" alt="" width="600" height="368"/></center></div>
+<p>En palabras más sencillas, la investigación de operaciones es un campo matemático que utiliza modelos, análisis estadístico y algoritmos para facilitar la toma de decisiones operativas y estratégicas en las empresas. De esta manera las empresas pueden tomar mejores decisiones y ser más eficientes.&nbsp;</p>
+      <p><strong>¿Que es?</strong><br>
+      La investigación operativa es un método analítico avanzado que permite la resolución de problemas y la toma de mejores decisiones en las organizaciones. Los métodos más utilizados incluyen lógica matemática, simulación, análisis de redes, teoría de colas y teoría de juegos.&nbsp;</p>
+      <p>La investigación de operaciones es una rama de <strong>las matemáticas</strong> que se vale de modelos, análisis estadístico y algoritmos para tomar decisiones operativas. También es conocida como la ciencia de la administración, porque se convierte en la ciencia que ayuda a la empresa a tomar decisiones importantes.</p>
+      <p>Con el uso de la investigación de operaciones es posible que los directivos en las organizaciones puedan construir sistemas eficaces que se basen en los datos completos, la consideración de todas las alternativas posibles, predecir cuidadosamente los resultados y hacer uso de herramientas y técnicas de decisión. <br>
+      </p>
+      <p><strong>Puntos clave</strong> <br>
+&nbsp;°-Es una rama de las matemáticas aplicadas que utiliza modelos, análisis estadístico y algoritmos para optimizar la toma de decisiones en las empresas.&nbsp; <br>
+&nbsp;°-Tuvo sus inicios durante la Segunda Guerra Mundial para solucionar problemas logísticos, y ahora se aplica en múltiples sectores empresariales y gubernamentales.&nbsp;&nbsp; <br>
+&nbsp;°-Su uso abarca desde la planificación y organización hasta el control y dirección de operaciones.&nbsp;</p>
+      <p>&nbsp;</p>
+		<center>
+			<img src="../Imagenes/ido.png" width="550" height="400" alt=""/>   </center>
+	  <p>&nbsp;Principales aplicaciones de la investigación de operaciones entre algunas de las principales aplicaciones de la investigación de operaciones encontramos: <br>
+1. Recurso humanos
+En todo caso, puede usarse para ver el impacto del proceso de la automatización y la reducción de costos, en el proceso de reclutamiento de personal, la asignación de tareas y funciones al personal. Así como el uso de incentivos para el proceso de producción.
+<br>
+2. Proceso de mercado y distribución
+También cuando una empresa espera desarrollar e introducir un nuevo producto al mercado. O bien, realizar pronósticos sobre la demanda, la ubicación de centros de distribución y analizar la situación competitiva.
+<br>
+3. Proceso de producción
+Por supuesto es usada en el proceso de planificación y el control de la producción. La combinación de los factores de producción, la localización y el tamaño de la planta de producción. De la misma forma para el control de calidad.
+<br>
+4. Compra de materiales
+Es usada para determinar las cantidades de material requeridos. Ejemplo de ello son las fuentes de suministro y sustitución de insumos, el reemplazo de equipos y máquinas, los costos fijos y variables.
+<br>
+5. Contabilidad y finanzas
+Adicionalmente se utiliza para analizar el capital requerido. Considerando las inversiones alternativas, el análisis del flujo de caja, manejo de reclamaciones y la seguridad en el manejo de los datos.
+</div>
+  <div id="seccion-temario" style="display: none; padding: 20px;"><p><strong>TEMARIO INVESTIGACION DE OPERACIONES I</strong></p>
+        </blockquote>
+      <p><b><br>
+        </b> <strong> <a href="#" onclick="mostrarUnidades('unidad1')"> UNIDAD 1-INTRODUCCION A LA UNIDAD</a></strong><br>
+1.1 INTRODUCCION DE LA INVESTIGACION DEOPERACIONE&nbsp;<br>
+        1.2 USO DEL ALGEBRA LINEAL EN OPTIMIZACION LINEAL<br>
+1.3 PROBLEMAS DE OPTIMIZACION SIN RESTRICCIONES<br>
+        1.4 MODELOS EXPRESADOS EN SISTEMAS DE ECUACIONES<br>
+        1.5 MODELOS EXPRESADOS CON SISTEMAS DEECUACIONES<br>
+        1.6 METODO SIMPLEX<br>
+        1.7 PROBLEMA DE LAS MEZCLAS<br>
+        1.8 EL PROBLEMA DE LA PRODUCCION<br>
+        1.9 EL PROBLEMA DE CONTROL DE INVENTARIOS<br>
+        1.10 PROBLEMA DE CONTROL DE INVENTARIOS<br>
+        1.11 MODELOS ECONOMICOS&nbsp; &nbsp; 
+	<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSf_6uMgx8X6NYW6EMznij2HxU0fuDr-HIJv02GwNegnyJToRQ/viewform?usp=preview">EVALUACION UNIDAD 1</a>&nbsp;&nbsp; </p>
+	<BR>
+  <p><strong><a href="#" onclick="mostrarUnidades('unidad2')">UNIDAD 2- MULTIPLICADORES SIMPLEX Y DUALIDAD</a></strong><br>
+        &nbsp;2.1 MULTIPLICADORES<br>
+      2.2 METODO SIMPLEX REVISADO<br>
+      2.3 DUALIDAD Y SIMPLEX DUAL<br>
+      2.4 ANALISIS DE SENSIBILIDAD&nbsp;<br>
+      2.5 PROGRAMACION LINEAL ENTERA Y MIXTA<br>
+	<a href="https://docs.google.com/forms/d/e/1FAIpQLSfFtrkjDjk8CfUboVUtgAVAsxOtloBpl4B1iY_f9c_HfLUrEw/viewform?usp=header">EVALUACION UNIDAD 2</a><BR></p>
+      <BR><p><strong><a href="#" onclick="mostrarUnidades('unidad3')">UNIDAD 3- PRINCIPIO DE REDES</a>&nbsp;&nbsp;</strong>&nbsp;<br>
+3.1 CONCEPTOS BASICOS<br>
+3.2 EL PROBLEMA DE TRANSPORTE<br>
+3.3 EL PROBLEMA DE LA ASIGNACION<br>
+3.4 EL PROBLEMA DE APRIVISIONAMIENTO Y DEMANDA<br>
+3.5 FLUJO DE REDES&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;</p>
+      <BR><p><strong>&nbsp;<a href="#" onclick="mostrarUnidades('unidad4')">UNIDAD 4- CONTROL DE PROYECTOS</a>&nbsp; </strong>&nbsp;&nbsp;<br>
+        4.1 METODOS DE RUTA CRITICA<br>
+        4.2 NIVELACION DE RECURSOS<br>
+        4.3 TIEMPO COSTO</p>
+     <br> <p><strong><a href="#" onclick="mostrarUnidades('unidad5')">UNIDAD 5- TEORIAS DE INVENTARIO</a></strong><br>
+        5.1 SISTEMAS DE ADMINISTRACION<br>
+        5.2 MODELOS DETERMINADOS<br>
+        5.2.1 LOTES ECONOMICOS SIN DEFIAT<br>
+      5.2.2 LOTES ECONOMICOS CON DEFIAT<br>
+      5.3 LOTE ECONOMICO DE PRODUCCION </p>
+     <br> <p>&nbsp;<strong><a href="#" onclick="mostrarUnidades('unidad6')">UNIDAD 6- LINEA DE ESPERA&nbsp;</a></strong><br>
+        6.1 DEFINICIONES, CARACTERISTICASY SUPOSISIONES<br>
+        6.2 TERMINOLOGIA Y NOTACION<br>
+        6.3 MODELOS DE POISSON<br>
+        6.4 PROCESO DE NACIMIENTO Y MUERTE<br>
+        6.5 ANALISIS DE COSTO</p>
+      <br><p><strong><a href="#" onclick="mostrarUnidades('unidad7')">UNIDAD 7- METODO DE TRANSPORTE</a></strong><br>
+        7.1 INTRODUCCION<br>
+        7.2 METODO DE APROXIMACION DE VOGEL<br>
+        7.3 EL ALGORITMO DE TRANSPORTE<br>
+	 <div id="contenido-temario" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 15px;"></div>
+	  </div>
+ <div id="seccion-calculadoras" style="display: none; padding: 20px;">
+  <h2>Calculadora del Método de Aproximación de Vogel (VAM)</h2>
+  <label>Filas (fuentes): <input type="number" id="rows" value="3" min="1"></label>
+  <label>Columnas (destinos): <input type="number" id="cols" value="4" min="1"></label>
+  <button class="btn" onclick="generateTable()">Generar tabla</button>
+  <div id="matrixInputs"></div>
+  <button class="btn" onclick="calculateVAM()">Calcular Método de Vogel</button>
+  <h3>Resultado</h3>
+  <div id="result"></div>
+
+<div class="section" style="margin-top: 40px;">
+    <h2>Calculadora de Ruta Crítica (CPM)</h2>
+    <table id="taskTable">
+      <thead>
+        <tr><th>Actividad</th><th>Duración</th><th>Predecesores</th><th>Acción</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input value="A"></td>
+          <td><input type="number" value="3"></td>
+          <td><input value="-"></td>
+          <td><button class="btn" onclick="removeRow(this)">Eliminar</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn" onclick="addRow()">Agregar Fila</button>
+    <button class="btn" onclick="calculateCPM()">Calcular Ruta Crítica</button>
+    <pre id="resultCPM"></pre>
+</div>
+
+<script>
+function generateTable() {
+  const rows = parseInt(document.getElementById("rows").value);
+  const cols = parseInt(document.getElementById("cols").value);
+  let html = "<table><tr><th></th>";
+  for (let j = 0; j < cols; j++) html += `<th>D${j + 1}</th>`;
+  html += "<th>Oferta</th></tr>";
+
+  for (let i = 0; i < rows; i++) {
+    html += `<tr><th>F${i + 1}</th>`;
+    for (let j = 0; j < cols; j++) {
+      html += `<td><input type="number" id="cell-${i}-${j}" min="0"></td>`;
+    }
+    html += `<td><input type="number" id="supply-${i}" min="0"></td></tr>`;
+  }
+
+  html += "<tr><th>Demanda</th>";
+  for (let j = 0; j < cols; j++) html += `<td><input type="number" id="demand-${j}" min="0"></td>`;
+  html += "<td></td></tr></table>";
+
+  document.getElementById("matrixInputs").innerHTML = html;
+}
+
+function calculateVAM() {
+  const rows = parseInt(document.getElementById("rows").value);
+  const cols = parseInt(document.getElementById("cols").value);
+  let supply = [], demand = [], costs = [];
+
+  for (let i = 0; i < rows; i++) {
+    supply.push(parseInt(document.getElementById(`supply-${i}`).value) || 0);
+    costs.push([]);
+    for (let j = 0; j < cols; j++) {
+      costs[i][j] = parseInt(document.getElementById(`cell-${i}-${j}`).value) || 0;
+    }
+  }
+
+  for (let j = 0; j < cols; j++) {
+    demand.push(parseInt(document.getElementById(`demand-${j}`).value) || 0);
+  }
+
+  let allocation = Array.from({length: rows}, () => Array(cols).fill(0));
+
+  while (Math.max(...supply) > 0 && Math.max(...demand) > 0) {
+    let rowPenalties = supply.map((s, i) =>
+      s > 0 ? getPenalty(costs[i], demand.map((_, j) => supply[i] > 0 && demand[j] > 0)) : -1);
+    let colPenalties = demand.map((d, j) =>
+      d > 0 ? getPenalty(costs.map(row => row[j]), supply.map((_, i) => supply[i] > 0 && demand[j] > 0)) : -1);
+
+    let maxRow = Math.max(...rowPenalties), maxCol = Math.max(...colPenalties);
+    let isRow = maxRow >= maxCol;
+    let min = Infinity, idx = -1;
+
+    if (isRow) {
+      let i = rowPenalties.indexOf(maxRow);
+      for (let j = 0; j < cols; j++) {
+        if (supply[i] > 0 && demand[j] > 0 && costs[i][j] < min) {
+          min = costs[i][j]; idx = j;
+        }
+      }
+      let val = Math.min(supply[i], demand[idx]);
+      allocation[i][idx] = val;
+      supply[i] -= val; demand[idx] -= val;
+    } else {
+      let j = colPenalties.indexOf(maxCol);
+      for (let i = 0; i < rows; i++) {
+        if (supply[i] > 0 && demand[j] > 0 && costs[i][j] < min) {
+          min = costs[i][j]; idx = i;
+        }
+      }
+      let val = Math.min(supply[idx], demand[j]);
+      allocation[idx][j] = val;
+      supply[idx] -= val; demand[j] -= val;
+    }
+  }
+
+  let total = 0, output = "<table><tr><th></th>";
+  for (let j = 0; j < cols; j++) output += `<th>D${j + 1}</th>`;
+  output += "</tr>";
+
+  for (let i = 0; i < rows; i++) {
+    output += `<tr><th>F${i + 1}</th>`;
+    for (let j = 0; j < cols; j++) {
+      total += allocation[i][j] * costs[i][j];
+      output += `<td>${allocation[i][j]}</td>`;
+    }
+    output += "</tr>";
+  }
+
+  output += `</table><p><strong>Costo total: ${total}</strong></p>`;
+  document.getElementById("result").innerHTML = output;
+}
+
+function getPenalty(arr, valid) {
+  let vals = arr.filter((_, i) => valid[i]).sort((a, b) => a - b);
+  return vals.length > 1 ? vals[1] - vals[0] : vals[0] || 0;
+}
+
+function addRow() {
+  let row = document.createElement("tr");
+  row.innerHTML = `
+    <td><input></td>
+    <td><input type="number" value="1"></td>
+    <td><input></td>
+    <td><button class="btn" onclick="removeRow(this)">Eliminar</button></td>`;
+  document.getElementById("taskTable").querySelector("tbody").appendChild(row);
+}
+
+function removeRow(btn) {
+  btn.closest("tr").remove();
+}
+
+function calculateCPM() {
+  const rows = Array.from(document.querySelectorAll("#taskTable tbody tr"));
+  let tasks = {}, result = "";
+  rows.forEach(row => {
+    const [id, duration, predecessors] = Array.from(row.querySelectorAll("input")).map(i => i.value.trim());
+    tasks[id] = {
+      duration: parseInt(duration),
+      predecessors: predecessors === "-" ? [] : predecessors.split(",").map(x => x.trim()),
+      es: 0, ef: 0, ls: 0, lf: 0
+    };
+  });
+
+  let completed = [], keys = Object.keys(tasks);
+  while (completed.length < keys.length) {
+    for (let id of keys) {
+      if (completed.includes(id)) continue;
+      let task = tasks[id];
+      if (task.predecessors.every(p => completed.includes(p))) {
+        task.es = Math.max(...task.predecessors.map(p => tasks[p].ef || 0), 0);
+        task.ef = task.es + task.duration;
+        completed.push(id);
+      }
+    }
+  }
+
+  let maxEF = Math.max(...keys.map(k => tasks[k].ef));
+  completed = [];
+  keys.sort((a, b) => tasks[b].ef - tasks[a].ef);
+  while (completed.length < keys.length) {
+    for (let id of keys) {
+      if (completed.includes(id)) continue;
+      let task = tasks[id];
+      let succs = keys.filter(k => tasks[k].predecessors.includes(id));
+      if (succs.every(s => completed.includes(s))) {
+        task.lf = succs.length ? Math.min(...succs.map(s => tasks[s].ls)) : maxEF;
+        task.ls = task.lf - task.duration;
+        completed.push(id);
+      }
+    }
+  }
+
+  result += "Actividad | ES | EF | LS | LF | Holgura | Crítica\n";
+  result += "-----------------------------------------------------\n";
+  keys.sort((a, b) => tasks[a].es - tasks[b].es);
+  for (let k of keys) {
+    let t = tasks[k], slack = t.ls - t.es;
+    result += `${k.padEnd(9)} | ${t.es.toString().padStart(2)} | ${t.ef.toString().padStart(2)} | ${t.ls.toString().padStart(2)} | ${t.lf.toString().padStart(2)} | ${slack.toString().padStart(7)} | ${slack === 0 ? "Sí" : "No"}\n`;
+  }
+
+  result += `\nTiempo total del proyecto: ${maxEF} unidades de tiempo`;
+  document.getElementById("resultCPM").textContent = result;
+}
+</script>
+	</div>
+
+  <div id="modal" class="modal-fondo">
+    <div class="modal-contenido">
+      <span class="cerrar" onclick="cerrarModal()">&times;</span>
+      <div id="form-login">
+        <h3>Iniciar Sesión</h3>
+        <input type="text" id="login-usuario" placeholder="Usuario" required>
+        <input type="password" id="login-clave" placeholder="Contraseña" required>
+        <button class="btn" onclick="iniciarSesion()">Entrar</button>
+        <div class="switch-link" onclick="mostrarRegistro()">¿No tienes cuenta? Regístrate</div>
+      </div>
+      <div id="form-registro" style="display: none;">
+        <h3>Registrar</h3>
+        <input type="text" id="registro-usuario" placeholder="Nuevo Usuario" required>
+        <input type="password" id="registro-clave" placeholder="Nueva Contraseña" required>
+        <button class="btn" onclick="registrarUsuario()">Registrar</button>
+        <div class="switch-link" onclick="mostrarLogin()">¿Ya tienes cuenta? Inicia Sesión</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let fondoActual = localStorage.getItem('fondo');
+    if (fondoActual) document.body.style.backgroundImage = `url(${fondoActual})`;
+
+    document.getElementById("btnSesion").addEventListener("click", () => {
+      if (sessionStorage.getItem("logueado") === "true") {
+        window.location.href = "perfil.html";
+      } else {
+        abrirModal();
+      }
+    });
+
+    function toggleCalculator() {
+      const el = document.getElementById('calculator');
+      el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function toggleCustomizer() {
+      const el = document.getElementById('customizer');
+      el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function toggleModo() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function fondoAleatorio() {
+      const url = `https://picsum.photos/seed/${Math.random()}/1200/800`;
+      document.body.style.backgroundImage = `url(${url})`;
+      localStorage.setItem('fondo', url);
+    }
+
+	 function quitarFondo() {
+  document.body.style.backgroundImage = 'none';
+  localStorage.removeItem('fondo');
+}
+
+    function setFondo(input) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.body.style.backgroundImage = `url(${e.target.result})`;
+        localStorage.setItem('fondo', e.target.result);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    function appendCalc(val) {
+      document.getElementById('calc-display').value += val;
+    }
+
+    function calcResult() {
+      try {
+        document.getElementById('calc-display').value = eval(document.getElementById('calc-display').value);
+      } catch {
+        document.getElementById('calc-display').value = 'Error';
+      }
+    }
+
+    function clearCalc() {
+      document.getElementById('calc-display').value = '';
+    }
+
+    function mostrarSeccion(id) {
+      ['inicio', 'temario', 'calculadoras'].forEach(s => {
+        document.getElementById(`seccion-${s}`).style.display = 'none';
+      });
+      document.getElementById(`seccion-${id}`).style.display = 'block';
+    }
+
+    function abrirModal() {
+      document.getElementById('modal').style.display = 'block';
+      mostrarLogin();
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    function mostrarRegistro() {
+      document.getElementById('form-login').style.display = 'none';
+      document.getElementById('form-registro').style.display = 'block';
+    }
+
+    function mostrarLogin() {
+      document.getElementById('form-login').style.display = 'block';
+      document.getElementById('form-registro').style.display = 'none';
+    }
+
+    function registrarUsuario() {
+      const usuario = document.getElementById('registro-usuario').value.trim();
+      const clave = document.getElementById('registro-clave').value;
+
+      if (!usuario || !clave) {
+        alert("Por favor completa ambos campos.");
+        return;
+      }
+
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+      if (usuarios[usuario]) {
+        alert("El usuario ya existe.");
+      } else {
+        usuarios[usuario] = clave;
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+        alert("Registro exitoso. Ahora puedes iniciar sesión.");
+        mostrarLogin();
+      }
+    }
+
+    function iniciarSesion() {
+      const usuario = document.getElementById('login-usuario').value.trim();
+      const clave = document.getElementById('login-clave').value;
+
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+      if (usuarios[usuario] && usuarios[usuario] === clave) {
+        alert("¡Inicio de sesión exitoso!");
+        sessionStorage.setItem("logueado", "true");
+        cerrarModal();
+        document.getElementById("btnSesion").innerText = "Mi Perfil";
+      } else {
+        alert("Usuario o contraseña incorrectos.");
+      }
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('modal');
+      if (event.target == modal) {
+        cerrarModal();
+      }
+    };
+  </script>
+<script>
+    const coloresArcoiris =  ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff", "#e0bbff", "#ffc8dd"];
+    const colorInicial = "white"; // Define el color de fondo al desactivar
+    let indice = 0;
+    let intervalo = null;
+    const teclasPresionadas = new Set();
+
+    function iniciarArcoiris() {
+      if (intervalo) return;
+      intervalo = setInterval(() => {
+        document.body.style.backgroundColor = coloresArcoiris[indice];
+        indice = (indice + 1) % coloresArcoiris.length;
+      }, 1000);
+    }
+
+    function detenerArcoiris() {
+      clearInterval(intervalo);
+      intervalo = null;
+      document.body.style.backgroundColor = colorInicial; // Restaurar fondo
+    }
+
+    document.addEventListener('keydown', (e) => {
+      teclasPresionadas.add(e.key.toLowerCase());
+
+      if (teclasPresionadas.has('m') && teclasPresionadas.has('g') && teclasPresionadas.has('d')) {
+        if (intervalo) {
+          detenerArcoiris();
+        } else {
+          iniciarArcoiris();
+        }
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      teclasPresionadas.delete(e.key.toLowerCase());
+    });
+  </script>
+	<script>
+  function mostrarUnidades(unidad) {
+    mostrarSeccion('temario');
+
+    const unidades = {
+      unidad1: `
+<p><h1>UNIDAD 1-INTRODUCCION A LA UNIDAD&nbsp;</h1>
+      <h3>
+        <!-- Tagline -->
+        <strong id="1.1">1.1- INTRODUCCCION A LA INVESTIGACION DE OPERACIONES</strong>&nbsp;</h3>
+      <div id="bannerImage"></div>
+      <p> Las primeras actividades formales de investigación de operaciones (IO) se iniciaron en Inglaterra durante la Segunda Guerra Mundial, cuando un equipo de científicos empezó a tomar decisiones con respecto a la mejor utilización del material bélico. Al término de la guerra, las ideas formuladas en operaciones militares se adaptaron para mejorar la eficiencia y productividad en el sector civil. Este capítulo presenta la terminología básica de la IO, que comprende el modelado matemático, soluciones factibles, optimización y cálculos iterativos. Hace hincapié en que la definición correcta del problema es la fase más importante (y más difícil) de practicar la IO. También se recalca que si bien el modelado matemático es la piedra angular de la IO, en la decisión final se deben tomar en cuenta factores incuantificables, como el comportamiento humano, por ejemplo. El libro presenta varias aplicaciones que utilizan ejemplos resueltos y problemas específicos.</p>
+      <a><p><strong id="1.2">1.2 - USO DE ALGEBRA LINEAL EN OPTIMIZACION LINEAL</strong>&nbsp; &nbsp;&nbsp;</p></a>
+      <p>La optimización lineal es un área aplicada del algebra lineal y tiene un gran significado en la resolución de problemas de optimización en economía, industria y administración. En un problema de optimización se trata de maximizar o minimizar un valor bajo determinadas condiciones de restricción. Así pues un valor ´optimo no es un “valor extremo”, sino un valor extremo bajo determinadas condiciones”.</p>
+      <p>&nbsp;Una empresa quiere averiguar cuantas unidades de cantidad de diferentes productos son producidos, para así con los determinados precios de venta maximizar el beneficio. Las posibles producciones serán limitadas mediante condiciones de distribución, limitaciones de capacidad y escasez de financiación. </p>
+      <blockquote>
+        <p><img src="../Imagenes/OPERACIONES 1.2.jpg" width="522" height="720" alt=""/>
+        </p>
+      </blockquote>
+      <p id="1.3">1.3	PROBLEMAS DE OPTIMIZACION SIN RESTRICCIONES</p>
+      <p>En optimización sin restricciones se minimiza una función objetivo que depende de variables reales sin restricciones sobre los valores de esas variables.&nbsp;</p>
+      
+      <img src="../Imagenes/OPERACIONES 1.3.jpg" width="700" height="441" alt=""/>
+	  <p id="1.4">&nbsp;1.4 MODELOS EXPRESADOS EN SISTEMAS DE ECUACIONES</p>
+		<p>&nbsp;Una gran empresa de Softdrinks quisiera llevar al mercado un nuevo producto. La nueva bebida está compuesta de tres ingredientes líquidos, donde el primer ingrediente cuesta 5 euros por litro, el segundo ingrediente 2 euros por litro y el tercer ingrediente 0,25 euros por litro. Además el ingrediente primero contiene 3g/l azúcar y 4 unidades/l de una sustancia aromática, mientras que el segundo ingrediente contiene 7g/l azúcar y 8 unidades/l de la sustancia aromática y el tercer ingrediente contiene 20g/l azúcar y ninguna sustancia aromática. Por motivos técnicos de producción deben ser producidos al menos 100 litros de la bebida en cada proceso de producción. La investigación del mercado ha obtenido, que la bebida de esta mezcla se aceptar en caso de que los parámetros se muevan en los siguientes intervalos. La bebida final debe contener al menos 3g/l azúcar y como mucho 6g/l azúcar. En un litro de la bebida debe encontrarse al menos 3 unidades de la sustancia aromática. Además la bebida debe componerse al menos del 40% del ingrediente 1, mientras que el ingrediente 2 está permitido como mucho en un 50% y el ingrediente 3 como mucho en un 30%.</p>
+	  <p id="1.5">1.5 MODELOS EXPRESADOS CON SISTEMAS DEECUACIONES</p>
+	  <p>&nbsp;Las condiciones del problema real deben ser ahora recogidas en un modelo matemático. Para esto se introducen en primer lugar las variables x1, x2 und x3, que representan en litros las cantidades de cada líquido. La empresa de Softdrink quiere evidentemente mantener un coste de producción bajo. La función de coste</p>
+	  <p><strong>&nbsp;5 · x1 + 2 · x2 + 0.25 · x3</strong>&nbsp;</p>
+	  <p>es la suma de cada liquido con sus precios y se llama función objetivo. De las restricciones referentes a los contenidos de azúcar se obtienen las siguientes restricciones:</p>
+	  <p><strong>3 · x1 + 7 · x2 + 20 · x3 ≥ 3 · (x1 + x2 + x3)</strong></p>
+	  <p><strong>&nbsp;3 · x1 + 7 · x2 + 20 · x3 ≤ 6 · (x1 + x2 + x3)</strong></p>
+	  <p>&nbsp;La restricción referente al contenido de aroma es:&nbsp;</p>
+	  <p><strong>4 · x1 + 8 · x2 ≥ 3 · (x1 + x2 + x3)</strong>&nbsp;</p>
+	  <p>Por la proporción de cada ingrediente en el Softdrink se obtienen las siguientes restricciones.&nbsp;</p>
+	  <p><strong>x1 ≥ 0.4 · (x1 + x2 + x3) <br>
+	    x2 ≤ 0.5 · (x1 + x2 + x3) <br>
+	    x3 ≤ 0.3 · (x1 + x2 + x3)&nbsp;</strong></p>
+      <p>La producción mínima en el proceso de producción es de 100 litros. Por lo tanto,&nbsp;</p>
+      <p><strong>x1 + x2 + x3 ≥ 100 </strong></p>
+      <p>&nbsp;Naturalmente también debe ser la cantidad de cada ingrediente mayor que cero. Se obtiene así la condición de no negatividad :</p>
+      <p><strong>&nbsp;x1, x2, x3 ≥ 0&nbsp;</strong></p>
+      <p>En el lado derecho de las desigualdades no debe haber ninguna variable, para esto son necesarias algunas transformaciones. Finalmente se obtiene el problema de optimización:&nbsp;</p>
+      <p><strong>min 5 · x1 + 2 · x2 + 0.25 · x3 <br>
+s.a 4 · x2 + 17 · x3 ≥ 0&nbsp;</strong></p>
+      <p><strong>−3 · x1 + x2 + 14 · x3 ≤ 0<br>
+x1 + 5 · x2 − 3 · x3 ≥ 0 <br>
+0.6 · x1 − 0.4 · x2 − 0.4 · x3 ≥ 0 <br>
+−0.5 · x1 + 0.5 · x2 − 0.5 · x3 ≤ 0 <br>
+−0.3 · x1 − 0.3 · x2 + 0.7 · x3 ≤ 0 <br>
+x1 + x2 + x3 ≥ 100 <br>
+x1, x2, x3 ≥ 0</strong></p>
+      <img src="../Imagenes/OPERACIONES 1.5.jpg" width="651" height="364" alt=""/>
+      <p id="1.6">&nbsp;1.6 METODO SIMPLEX</p>
+      <p>&nbsp;La idea del Método del Simplex es moverse de vértice a vértice de la región factible con esto se mejora constantemente la función objetivo, en contraste con el método grafico aquí también pueden ser considerados PL de más de dos variables. El procedimiento acaba cuando la función objetivo no puede ser mejorada.</p>
+      <img src="../Imagenes/OPERACIONES 1.6.jpg" width="589" height="481" alt=""/>
+      <img src="../Imagenes/OPERACIONES 1.62.jpg" width="589" height="306" alt=""/>
+      <video controls src="../VIDEOS/elmetdosimplex.mp4" width="589"alt="306"></video>
+      <p id="1.7">&nbsp;1.7 PROBLEMA DE LAS MEZCLAS</p>
+      <p>Una de las aplicaciones clásicas de los modelos de Programación Lineal son los problemas de mezcla de productos. Si la calidad de un producto que se procesa mediante la mezcla de determinados insumos se puede aproximar de forma razonable a través de una proporción, entonces un modelo de optimización lineal puede resultar de utilidad.</p>
+      <p>&nbsp;Ejemplo: El dueño de un restaurante mezcla vino de 1,1 € el litro con vino de 3,5€ el litro. Si se han obtenido 400 L de mezcla y quiere venderlo a 2,6 € el litro, ¿cuántos litros se han utilizado de cada clase?&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 1.7.jpg.png" width="555" height="318" alt=""/><img src="../Imagenes/OPERACIONES 1.72.jpg.png" width="513" height="333" alt=""/><img src="../Imagenes/OPERACIONES 1.73.jpg.png" width="546" height="202" alt=""/>
+      <p id="1.8">&nbsp;1.8 EL PROBLEMA DE LA PRODUCCION</p>
+      <p>&nbsp;En preparación para la temporada invernal, una compañía fabricante de ropa está manufacturando abrigos de piel con capucha y chamarras con relleno de plumas de ganso, pantalones con aislamiento y guantes. Todos los productos se elaboran en cuatro departamentos diferentes: corte, aislamiento, costura y empaque. La compañía recibió pedidos en firme de sus productos. El contrato estipula una penalización por los artículos no surtidos. Elabore un plan de producción óptimo para la compañía, con base en los siguientes datos:</p>
+      <img src="../Imagenes/OPERACIONES 1.8.jpg.png" width="563" height="204" alt=""/><img src="../Imagenes/OPERACIONES 1.82.jpg.png" width="544" height="336" alt=""/><img src="../Imagenes/OPERACIONES 1.83.jpg.png" width="567" height="292" alt=""/>
+      <p id="1.9">&nbsp;1.9 EL PROBLEMA DE CONTROL DE INVENTARIOS</p>
+      <p>&nbsp;En términos generales un inventario es un conjunto de recursos útiles que se encuentran ociosos en algún momento. El objetivo de los problemas de inventario es minimizar los costes (totales o esperados) del sistema sujetos a la restricción de satisfacer la demanda (conocida o aleatoria). Entre los diferentes costes que puede haber en un problema de inventario están:
+      <p>1.- Costes de fabricación. <br>
+        2.- Costes de mantenimiento o almacenamiento. <br>
+        3.- Costes de penalización o rotura por no satisfacer la demanda. <br>
+        4.- Rendimientos o ingresos. (Puede o no incluirse en el modelo). <br>
+        5.- Costes de recuperación o salvamento. (El valor de recuperación representa el valor de desecho del artículo para la empresa, quizá a través de una venta con descuento). <br>
+        6.- Tasa de descuento. La tasa de descuento toma en cuenta el valor del dinero en el tiempo.&nbsp;</p>
+      <p>Cuando una empresa compromete capital en inventarios, no puede usar este dinero para otros fines.</p>
+      <video controls src="../VIDEOS/problema de inventarios.mp4" width="520" height="320"></video>
+      <p id="1.10">&nbsp;1.10 PROBLEMA DE CONTROL DE INVENTARIOS</p>
+<p>
+  </p>
+<p>&nbsp;Acme Manufacturing Company firmó un contrato para entregar 100, 250, 190, 140, 220 y 110 ventanas para casa durante los siguientes seis meses. El costo de producción (mano de obra, material y servicios) por ventana varía por periodo y se estima que será de $50, $45, $55, $52 y $50 durante los próximos seis meses. Para aprovechar las fluctuaciones del costo de fabricación, Acme puede producir más ventanas de las necesarias en un mes dado y conservar las unidades adicionales para entregarlas en meses posteriores. Esto supondrá un costo de almacenamiento a razón de $8 por ventana por mes, estimado en el inventario de fin de mes. Desarrolle un programa lineal para determinar el programa de producción óptimo.</p>
+<img src="../Imagenes/OPERACIONES 1.10.jpg.png" width="554" height="356" alt=""/><img src="../Imagenes/OPERACIONES 1.101.jpg.png" width="565" height="401" alt=""/><img src="../Imagenes/OPERACIONES 1.102.jpg.png" width="587" height="304" alt=""/>
+<p id="1.11">1.11 MODELOS ECONOMICOS&nbsp;</p>
+<p>Los modelos económicos son representaciones matemáticas de sistemas o procesos económicos, que permiten analizar, optimizar y tomar decisiones sobre la asignación de recursos en situaciones complejas. La investigación de operaciones, como disciplina, se enfoca en aplicar técnicas matemáticas y computacionales para resolver problemas prácticos, particularmente en áreas como la producción, la logística, las finanzas y la distribución de recursos. Dentro de este marco, los modelos económicos sirven para entender y predecir el comportamiento de los sistemas económicos, y para encontrar soluciones óptimas a problemas como la maximización de beneficios, la minimización de costos o el equilibrio entre oferta y demanda. Los modelos económicos en investigación de operaciones se pueden clasificar en varios tipos, dependiendo de la naturaleza del problema y de los objetivos a alcanzar. Algunos de los más comunes son:&nbsp;</p>
+<p>● <strong>Modelos de programación lineal:</strong> Estos modelos buscan optimizar una función objetivo (como maximizar ganancias o minimizar costos) sujeta a una serie de restricciones. Son útiles para problemas como la planificación de la producción, la distribución de productos, o la asignación de recursos limitados.&nbsp;</p>
+<p>● <strong>Modelos de programación entera:</strong> Similar a los modelos de programación lineal, pero con la particularidad de que las variables de decisión deben tomar valores enteros, lo que es común en problemas como la asignación de personal, el diseño de redes de transporte, o la planificación de proyectos.&nbsp;</p>
+<p>●<strong> Modelos de redes:</strong> Estos modelos se aplican para analizar problemas de flujo de materiales, información o personas a través de una red, como en el caso de la optimización de rutas de distribución, o la gestión de la cadena de suministro.&nbsp;</p>
+<p>● <strong>Modelos de simulación:</strong> Aunque no siempre se consideran modelos "económicos" en el sentido clásico, las simulaciones son una herramienta poderosa para modelar sistemas económicos complejos que no se pueden representar con precisión mediante ecuaciones matemáticas cerradas. Son útiles para simular el comportamiento de mercados, procesos de producción o sistemas financieros.&nbsp;</p>
+<p>● <strong>Modelos de juegos y teoría de decisiones:</strong> Estos modelos se utilizan para analizar situaciones en las que los resultados dependen de las decisiones de múltiples actores (como empresas o individuos) que interactúan entre sí.&nbsp;</p>
+<p>En el contexto económico, se usan para estudiar la competencia, la cooperación y la toma de decisiones en entornos inciertos. Estos modelos no solo se enfocan en la optimización matemática, sino también en la interpretación y aplicación práctica de los resultados obtenidos. De esta manera, se logran soluciones que mejoran la eficiencia operativa y económica en empresas, gobiernos e instituciones. </p>
+      `,
+      unidad2: `
+ <h1>UNIDAD 2- MULTIPLICADORES SIMPLEX Y DUALIDAD&nbsp;</h1>
+      <h3 id=2.1>
+        <!-- Tagline -->
+        2.1 MULTIPLICADORES&nbsp;</h3>
+      <p>&nbsp;La relación entre el método de los multiplicadores y el método simplex puede explicarse con base en las relaciones primal-dual (sección 4.2). Por la estructura especial de la programación lineal que representa el modelo de transporte (vea el ejemplo 5.1-1 para una ilustración), el problema dual asociado se escribe como.</p>
+      <img src="../Imagenes/OPERACIONES 2-1.png" width="474" height="158" alt=""/><img src="../Imagenes/OPERACIONES 2-12.png" width="576" height="404" alt=""/>
+      <p id=2.2>&nbsp;2.2 METODO SIMPLEX REVISADO </p>
+      <p>El método simplex revisado consiste en tener en cuenta los comportamientos de las variables en situaciones donde pueden considerarse variables negativas debido a que factores externos del problema pueden llevar a que haya modificaciones inesperadas de estas variables .Para esto se necesitan agregar al modelamiento del problema de programación lineal, valores positivos y negativos de las variables, algo que abordaremos más adelante.&nbsp;</p>
+      <p>A modo de conclusión te queremos recordar que los métodos de solución simplex pueden ser utilizados para cualquier tipo de problemas de programación lineal pero recuerden que este método en su estado natural no permite variables negativas por lo que si estamos en presencia de un problema de programación lineal mediante el cual al estudiar el comportamiento de las variables definimos que hay variables que pueden tener valores negativos, positivos o iguales a cero, entonces debemos usar para resolverlo el método Simplex Revisado. &nbsp;</p>
+      <p id=2.3>&nbsp;2.3 DUALIDAD Y SIMPLEX DUAL</p>
+      <p>Uno de los descubrimientos más importantes durante el desarrollo inicial de la programación lineal fue el concepto de dualidad y sus muchas e importantes ramificaciones. <br>
+        Este descubrimiento revelo que asociado a todo problema de programación lineal existe otro problema lineal llamado dual. Las relaciones entre el dual y su original (llamado primal) son extremadamente útiles en una gran variedad de situaciones. Por ejemplo, se verá que de hecho la solución ´optima del problema dual es la que proporciona los precios sombra descritos en las practicas al introducir el análisis de sensibilidad.&nbsp;</p>
+      <p>Uno de los papeles clave que juega la teoría de la dualidad es la interpretación y realización del análisis de sensibilidad. <br>
+      De hecho la dualidad nos permitirá tratar dicho análisis desde el punto de vista algebraico pudiendo así generalizarlo y aplicarlo a cualquier problema de programación lineal, independientemente de cual sea su tamaño i.e., número de variables y/o restricciones.&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 2-3.png" width="554" height="317" alt=""/><img src="../Imagenes/OPERACIONES 2-32.png" width="569" height="439" alt=""/>
+      <p id=2.4>&nbsp;2.4 ANALISIS DE SENSIBILIDAD </p>
+      <p>&nbsp;Es un análisis que busca determinar los efectos producidos en la solución óptima por un cambio en cualquier parámetro de un modelo de programación lineal. Se investiga cómo afectará una modificación en los coeficientes de las variables básicas y no básicas, en los recursos disponibles o si se introduce una nueva restricción. El objetivo es el de determinar hasta qué punto es fiable la solución óptima según las alteraciones que puedan darse. Hay que tener en cuenta que la solución se basa en que los datos de partida se mantendrán constantes, lo cual solo se da en periodos de tiempo cortos. Por tanto, al utilizar este análisis, se puede prever cómo se comportará ante los cambios que posiblemente surjan. También contribuye a determinar qué parámetros o variables pueden fluctuar sin que estos afecten a la solución óptima. Algunos presentan unos intervalos mayores sin provocar cambios, pero otros serán mucho más sensibles. Al detectarlos, es posible mantenerlos bajo supervisión para afrontar los problemas que puedan llegar a causar. En función de su comportamiento, se efectuarán los ajustes pertinentes para evitar que la solución acabe por fallar.</p>
+      <img src="../Imagenes/OPERACIONES 2-4.jpg" width="589" height="297" alt=""/>
+      <p id=2.5>2.5 PROGRAMACION LINEAL ENTERA Y MIXTA</p>
+      <p>&nbsp;Un modelo de Programación Entera es aquel cuya solución óptima tiene sentido solamente si una parte o todas las variables de decisión toman valores restringidos a números enteros, permitiendo incorporar en el modelamiento matemático algunos aspectos que quedan fuera del alcance de los modelos de Programación Lineal.</p>
+      <p>&nbsp;1) Los problemas de programación entera pura son casos donde se requiere que todas las variables tengan valores enteros. <br>
+        &nbsp;2) Los problemas de programación entera mixta son casos en los cuales se requiere que algunas variables de decisión, aunque no todas, tengan valores enteros.&nbsp;</p>
+      <p>• Extensión de los modelos LP, donde se requiere que al menos una de las variables tome valores enteros. <br>
+        • Cuando se exige que todas las variables tomen valores enteros, se denominan problemas de Programación Entera (IP). <br>
+        • Un caso particular (e importante) es el caso de variables binarias, es decir, cuando toman valores en el conjunto {0,1}. <br>
+        • Se pierde la propiedad de convexidad de LP, por lo tanto los modelos MILP son en general más difíciles de resolver que los de LP.&nbsp;</p>
+      <p>Ejemplos de aplicación <br>
+        • Planificación de la producción <br>
+        • Problemas de transporte y distribución <br>
+        • Problemas de instalación <br>
+        • Problemas de secuenciamento de tareas <br>
+        • Problemas con costos de configuración <br>
+        • Problemas de cubrimiento <br>
+        • Problemas de ruteo de vehículos <br>
+        • Problemas de diseño de redes</p>
+      `,
+      unidad3: `
+       <h1>UNIDAD 3- PRINCIPIO DE REDES&nbsp;&nbsp;</h1>
+        <p>
+          <!-- Tagline -->
+          <br>
+         <p id=3.1> 3.1 Conceptos Básicos <br></p>
+          <br>
+        </p>
+        <p> La Investigación de Operaciones se enfoca en la toma de decisiones óptimas mediante modelos matemáticos. Los elementos básicos de cualquier modelo son:&nbsp;</p>
+        <p>&nbsp;Variables de decisión: Representan las acciones que se pueden controlar (ej. cuántas unidades producir).&nbsp;</p>
+        <p>&nbsp;Función objetivo: Es la expresión matemática que se desea maximizar o minimizar (ej. maximizar ganancias).&nbsp;</p>
+        <p>&nbsp;Restricciones: Condiciones que deben cumplirse (ej. capacidad limitada de producción).&nbsp; </p>
+        <p>Factibilidad: Una solución que cumple todas las restricciones.&nbsp;</p>
+        <p>&nbsp;Optimalidad: La mejor solución factible respecto a la función objetivo.&nbsp;</p>
+        <p>&nbsp;Los modelos pueden ser:
+          
+          Lineales: Todas las relaciones son proporcionales.
+          
+          No lineales: Contienen productos, potencias o relaciones no proporcionales. <a><br>
+          </a></p>
+<p id=3.2>3.2 El Problema de Transporte</a></p> 
+<p> Este problema busca determinar la forma más económica de distribuir productos desde varios puntos de origen a varios destinos.
+  
+  Ejemplo:
+  Una empresa debe enviar productos desde dos fábricas (F1 y F2) a tres almacenes (A1, A2 y A3).&nbsp;</p>
+<p>La oferta, demanda y costos unitarios se muestran a continuación: <br>
+  <br>
+</p>
+<p><img src="../Imagenes/Captura de pantalla 2025-04-29 101019.png" width="598" height="160" alt="">&nbsp;</p>
+           <p>Objetivo: Minimizar el costo total de transporte. <br>
+             <br>
+           </p>
+           <p> Método sugerido: Método de Aproximación de Vogel + Método MODI para optimizar. <a><br>
+             <br>
+           </a></p>
+<p id=3.3><a>3.3 El Problema de la Asignación</a> \<br>
+             <br>
+             Es un caso especial del problema de transporte donde la cantidad de oferta y demanda es igual, y cada recurso se asigna a una sola tarea.
+             
+             Ejemplo:
+             Asignar 3 trabajadores (W1, W2, W3) a 3 tareas (T1, T2, T3). El costo de cada asignación es:</p>
+           <p>&nbsp; <img src="../Imagenes/Captura de pantalla 2025-04-29 101423.png" width="599" height="159" alt="">&nbsp;</p>
+           <p>Objetivo: Minimizar el costo total de asignación.
+             
+             Método de solución: Método Húngaro, que trabaja restando mínimos por filas y columnas, luego buscando coberturas óptimas.&nbsp;</p>
+           <p id=3.4>&nbsp;3.4 El Problema de Aprovisionamiento y Demanda&nbsp;</p>
+           <p>&nbsp;Este modelo se utiliza para planificar el inventario, considerando la demanda futura, el costo de ordenar, y el costo de mantener inventario.
+             
+             Modelo EOQ (Lote económico de pedido)&nbsp;</p>
+           <p>&nbsp;Fórmula:</p>
+           <p><img src="../Imagenes/Captura de pantalla 2025-04-29 101435.png" width="319" height="134" alt=""/>​&nbsp;</p>
+           <p>&nbsp;Donde:</p>
+           <p>&nbsp;𝐷
+             D: Demanda anual&nbsp;</p>
+           <p>&nbsp;𝑆
+             S: Costo de hacer un pedido&nbsp;</p>
+           <p>&nbsp;𝐻
+             H: Costo de mantenimiento por unidad/año&nbsp;</p>
+           <p>&nbsp;Ejemplo:&nbsp;</p>
+           <p>&nbsp;Demanda: 10,000 unidades/año&nbsp;</p>
+           <p>&nbsp;Costo por pedido: $50&nbsp;</p>
+           <p>&nbsp;Costo de mantenimiento: $2 por unidad/año&nbsp;</p>
+           <p><img src="../Imagenes/Captura de pantalla 2025-04-29 101445.png" width="599" height="73" alt=""/></p>
+<p id=3.5>&nbsp;3.5 Flujo de Redes&nbsp;</p>
+<p>&nbsp;Los problemas de flujo de redes modelan cómo distribuir un flujo (como productos, personas o datos) a través de una red.
+  
+  Tipos comunes:</p>
+<p>&nbsp;- Flujo máximo: Maximizar el flujo desde una fuente hasta un destino.         
+             Camino más corto: Minimizar la distancia o el tiempo entre dos nodos.&nbsp;</p>
+<p>&nbsp;- Flujo de costo mínimo: Minimizar el costo de transportar una cantidad de flujo a través de la red.&nbsp;</p>
+<p>&nbsp;Ejemplo de Flujo Máximo (Ford-Fulkerson):&nbsp;</p>
+<p>&nbsp;En una red con nodos y capacidades, encontrar la mayor cantidad que puede enviarse desde el nodo fuente 
+  𝑆
+  S al nodo destino 
+  𝑇
+  T sin exceder las capacidades de los arcos.
+  
+  (Se puede representar con un grafo dirigido con pesos.) </p>
+      `,
+    unidad4: `
+ <h1>UNIDAD 4 CONTROL DE PROYECTOS &nbsp;</h1>
+      <h3>
+        
+  &nbsp;<p id=4.1>4.1 METODOS DE RUTA CRITICA</h3></p>
+      <p>El método de la ruta crítica es una técnica que te permite identificar las tareas necesarias para finalizar un proyecto y determinar cierta flexibilidad en el cronograma. Una ruta crítica en la gestión de proyectos es la secuencia más larga de actividades que deben finalizarse a tiempo para completar todo el proyecto. <br>
+      Cualquier retraso en las tareas críticas provocará el retraso del resto del proyecto.&nbsp;</p>
+      <p>El método de la ruta crítica tiene como fin identificar las tareas más importantes del cronograma del proyecto, detectar las dependencias de las tareas y calcular la duración de las tareas. El método de la ruta crítica fue desarrollado a fines de la década de 1950 como un método para dar solución al aumento de los costos producido por la planificación ineficiente. <br>
+        Desde entonces, se usa con frecuencia para planificar proyectos y priorizar tareas. Te ayuda a desglosar tareas complejas en tareas individuales y a tener una idea general de la flexibilidad de un proyecto&nbsp;</p>
+      <p><strong>Conceptos básicos para diagramar actividades con redes</strong>&nbsp;</p>
+      <p><strong>Regla 1:</strong> Cada actividad se debe representar sí y sólo sí, por un ramal o arco.&nbsp;</p>
+      <strong><img src="../Imagenes/OPERACIONES 4 1.1.png" width="421" height="174" alt=""/></strong>
+      <p><strong>Regla 2:</strong> Cada actividad debe estar identificada por dos nodos distintos. En el caso de existir actividades concurrentes (que inicien al mismo tiempo, o que el inicio de una actividad dependa de la finalización de 2 o más actividades distintas) se debe recurrir a actividades ficticias (representadas por arcos punteados que no consumen ni tiempo ni recursos) para satisfacer esta regla.&nbsp;</p>
+      <p>Por ejemplo, la actividad C para su inicio requiere que finalicen A y B. Las actividades A y B inician al mismo tiempo.&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 4 1.2.png" width="610" height="369" alt=""/>
+      <p>&nbsp;<strong>Fases para la planificación de un proyecto con CPM</strong>&nbsp;</p>
+      <p><strong>Paso 1:</strong> <strong>Actividades del proyecto</strong>&nbsp;</p>
+      <p>La primera fase corresponde a identificar todas las actividades que intervienen en el proyecto, sus interrelaciones, sucesiones, reglas de precedencia. Con la inclusión de cada actividad al proyecto se debe cuestionar respecto a que actividades preceden a esta, y a cuales siguen inmediatamente esta finalice. Además, deberá relacionarse el tiempo estimado para el desarrollo de cada actividad.</p>
+      <strong><img src="../Imagenes/OPERACIONES 4 1.3.png" width="351" height="361" alt=""/></strong>
+      <p><strong>Paso 2: Diagrama de la red</strong>&nbsp;</p>
+      <p>Con base en la información obtenida en la fase anterior y haciendo uso de los conceptos básicos para diagramar una red, obtendremos el gráfico del proyecto: &nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 4 1.4.png" width="590" height="308" alt=""/>
+      <p><strong>&nbsp;Paso 3: Calcular la red</strong>&nbsp;</p>
+      <p>Para el cálculo de la red se consideran 3 indicadores, T1, T2 y H. Estos indicadores se calculan en cada evento o nodo (entiéndase nodo entonces como un punto en el cual se completan actividades y se inician las subsiguientes.&nbsp;</p>
+      <p><strong>T1:</strong> Tiempo más temprano de realización de un evento. Para calcular este indicador deberá recorrerse la red de izquierda a derecha y considerando lo siguiente:&nbsp;</p>
+      <p>T1 del primer nodo es igual a 0.&nbsp;</p>
+      <p>T1 del nodo n = T1 del nodo n-1 (nodo anterior) + duración de la actividad que finaliza en el nodo n.&nbsp;</p>
+      <p>Si en un nodo finaliza más de una actividad, se toma el tiempo de la actividad con mayor valor.</p>
+      <strong><img src="../Imagenes/OPERACIONES 4 1.5.png" width="554" height="352" alt=""/></strong>
+      <p>En este caso para el cálculo del T1 en el nodo 4, en el que concurren la finalización de 3 actividades, 2 de ellas ficticias (Fb y Fd, cuyos tiempos son cero) y una es la actividad C. En este caso deberá considerarse el mayor de los T1 resultantes:&nbsp;</p>
+      <p>T1 (nodo 3) + Fb = 4 + 0 = 4 <br>
+        T1 (nodo 2) + C = 3 + 2 = 5 <br>
+        T1 ( nodo 5) + Fd = 5 + 0 = 5&nbsp;</p>
+      <p>Así entonces, el T1 del nodo 4 será igual a 5 (el mayor valor). T2:&nbsp;</p>
+      <p>Tiempo más tardío de realización del evento. Para calcular este indicador deberá recorrerse la red de derecha a izquierda y considerando lo siguiente:&nbsp;</p>
+      <p>T2 del primer nodo (de derecha a izquierda) es igual al T1 de este. <br>
+        T2 del nodo n = T2 del nodo n-1 (nodo anterior, de derecha a izquierda) – duración de la actividad que se inicia.&nbsp;</p>
+      <p>Si en un nodo finaliza más de una actividad, se toma el tiempo de la actividad con menor valor.&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 4 1.6.png" width="576" height="345" alt=""/>
+      <p>En este caso para el cálculo del T2 del nodo 2, en el que concurren el inicio de varias actividades deberá entonces considerarse lo siguiente:&nbsp;</p>
+      <p>T2 nodo 3 – B = 5 – 1 = 4 <br>
+        T2 nodo 4 – C = 5 – 2 = 3 <br>
+        T2 nodo 5 – D = 5 – 2 = 3&nbsp;</p>
+      <p>Así entonces, el T2 del nodo 2 será 3, es decir el menor valor. H: Tiempo de holgura, es decir la diferencia entre T2 y T1.&nbsp;</p>
+      <p>Esta holgura, dada en unidades de tiempo corresponde al valor en el que la ocurrencia de un evento puede tardarse. Los eventos en los cuales la holgura sea igual a 0 corresponden a la ruta crítica, es decir que la ocurrencia de estos eventos no puede tardarse una sola unidad de tiempo respecto al cronograma establecido, dado que en el caso en que se tardara retrasaría la finalización del proyecto.</p>
+      <img src="../Imagenes/OPERACIONES 4 1.7.png" width="581" height="362" alt=""/>
+      <p>Las actividades críticas por definición constituyen la ruta más larga que abarca el proyecto, es decir que la sumatoria de las actividades de una ruta crítica determinará la duración estimada del proyecto. Puede darse el caso en el que se encuentren más de una ruta crítica, como es el caso del problema que hemos desarrollado.&nbsp;</p>
+      <p><strong>Ruta crítica 1:</strong>&nbsp;</p>
+      <strong><img src="../Imagenes/OPERACIONES 4 1.8.png" width="500" height="311" alt=""/></strong>
+      <p>&nbsp;Esta ruta se encuentra compuesta por las actividades A, C y E. La duración del proyecto será de 9 horas.&nbsp;</p>
+      <p><strong>Ruta Crítica 2:</strong></p>
+      <strong><img src="../Imagenes/OPERACIONES 4 1.9.png" width="522" height="324" alt=""/></strong>
+      <p>&nbsp;<strong>Paso 4: Establecer el cronograma</strong>&nbsp;</p>
+      <p>Para establecer un cronograma deberán considerarse varios factores, el más importante de ellos es la relación de precedencia, y el siguiente corresponde a escalonar las actividades que componen la ruta crítica de tal manera que se complete el proyecto dentro de la duración estimada.</p>
+      <img src="../Imagenes/OPERACIONES 4 1.10.png" width="672" height="358" alt=""/>
+      <p id=4.2>&nbsp;4.2 NIVELACION DE RECURSOS</p>
+      <p>El propósito de la nivelación de recursos es aprovechar al máximo los recursos disponibles a la vez que se trabaja respetando las limitaciones de tiempo, costo y alcance del proyecto. La nivelación de recursos puede ser un desafío para los gerentes de proyectos, ya que requiere equilibrar la demanda de los mismos recursos por parte de diferentes proyectos.&nbsp;</p>
+      <p>Dependiendo de las necesidades de tu equipo, a continuación, mencionamos los posibles resultados: Si el objetivo es mantener la fecha límite actual del proyecto, entonces sería necesario disponer de más recursos. Si el objetivo es llevar adelante el proyecto con los recursos con los que se dispone actualmente, debería extenderse la fecha límite del proyecto.&nbsp;</p>
+      <p>1- La nivelación de recursos modifica la asignación de recursos o los programas del proyecto para evitar sobrecargar los recursos. <br>
+        2- Esto será útil para mantener la calidad de los resultados del proyecto. <br>
+        3- En qué situaciones se debe usar la nivelación de recursos <br>
+        4- La nivelación de recursos evita que los recursos abarquen demasiado y, al mismo tiempo, garantiza que los proyectos tengan lo que necesitan para tener éxito.&nbsp;</p>
+      <p>Esta técnica no solo es beneficiosa para la gestión de proyectos, sino que también ayuda a mantener el equilibrio entre la vida laboral y la vida personal de los miembros del equipo. Estas son algunas de las razones por las que tu equipo puede beneficiarse al poner en práctica la nivelación de recursos.&nbsp;</p>
+      <p>Para optimizar tus recursos La nivelación de recursos te permite aprovechar al máximo los recursos de los que dispones. Te ayuda a evaluar qué proyectos deben recibir recursos adicionales y cuáles son flexibles en cuanto a plazos. Para minimizar los déficits La nivelación de recursos evita retrasos significativos en los proyectos, minimizando así las pérdidas relacionadas con costos y mano de obra.&nbsp;</p>
+      <p>Esta técnica te permite gestionar la demanda de recursos sin exceder la capacidad y los recursos financieros con los que actualmente cuenta la empresa. Para evitar la sobrecarga de tareas El hecho de excederte en la asignación de recursos conduce a la sobrecarga de trabajo, algo que puede resultar abrumador para los miembros del equipo. La nivelación de recursos evita esto al resolver los problemas relacionados con la asignación de trabajo en exceso y al modificar los plazos para garantizar que los miembros del equipo no tengan más responsabilidades de las que pueden abordar.&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 4 4.1.jpg" width="650" height="916" alt=""/>
+      <p id=4.3>&nbsp;4.3 TIEMPO COSTO</p>
+      <p>El costo de tiempo en la investigación de operaciones es la cantidad de tiempo que se requiere para completar un proyecto, desde su planificación hasta su finalización. Para calcular el costo del tiempo, se multiplica las ganancias potenciales por hora por las horas invertidas. Para estimar los tiempos y costos de un proyecto, se deben considerar los siguientes aspectos:&nbsp;</p>
+      <p>La duración total del proyecto <br>
+        La fecha de inicio <br>
+        fin de cada actividad&nbsp;</p>
+      <p>El conocimiento de los posibles retrasos o desfases en la realización de las tareas Es importante tener en cuenta que los retrasos en las actividades individuales del proyecto pueden afectar directamente los costos presupuestados.&nbsp;</p>
+      <p>Las estimaciones de costos ayudan a garantizar que el proyecto alcance sus objetivos dentro del cronograma y presupuesto aprobados. &nbsp;</p>
+      `,
+      unidad5: `
+    <h1>UNIDAD 5 TEORIAS DE INVENTARIO&nbsp;</h1>
+      <h3>
+        <!-- Tagline -->
+        <p id=5.1>5.1 SISTEMAS DE ADMINISTRACION</h3></p>
+      <p>Los sistemas de administración en investigación de operaciones son herramientas que permiten a los directivos de una organización tomar mejores decisiones y construir sistemas eficaces.&nbsp;</p>
+      <p>La investigación de operaciones es un método analítico que se basa en la aplicación del método científico para resolver problemas en las empresas. <br>
+        Para ello, se crean modelos que representan los problemas y se utilizan técnicas como la programación lineal y el análisis de decisiones.&nbsp;</p>
+      <p>Los sistemas de administración en investigación de operaciones pueden ayudar a los directivos a: Construir sistemas eficaces, Considerar todas las alternativas posibles, Predecir los resultados, Hacer uso de herramientas y técnicas de decisión. Algunos ejemplos de sistemas de administración y control son:&nbsp;</p>
+      <p>Establecer normas y protocolos para la gestión de inventario <br>
+      Controlar la trazabilidad de los productos <br>
+      Disponer de información histórica centralizada <br>
+      Conocer en tiempo real la entrada y salida de mercancías &nbsp;</p>
+      <p id=5.2><h3>&nbsp;5.2 MODELOS DETERMINADOS&nbsp;</h3></p>
+      <p>Los modelos determinísticos son aquellos donde se supone que los datos se conocen con certeza, es decir, se supone que cuando el modelo sea analizado se tiene disponible toda la información necesaria para la toma de decisiones.</p>
+      <p>Un Modelo determinístico es un modelo matemático donde las mismas entradas producirán invariablemente las mismas salidas, no contemplándose la existencia del azar ni el principio de incertidumbre.</p>
+      <p><strong>Características</strong></p>
+      <p>•La inclusión de mayor complejidad en las relaciones con una cantidad mayor de variables y elementos ajenos.<br>
+        •Aproxima a un modelo probabilístico o de enfoque estocástico&nbsp;<br>
+        •Estos tipos de modelos tienden a ser más populares en la literatura. Ejemplo: incluyen la mayoría de los modelos de RBC (Ciclo Real de Negocios), o nuevos modelos monetarios keynesianos.<br>
+        •Dentro de los modelos podemos generar una su clasificación si consideramos además del supuesto de certeza, que la demanda puede ser estática, que es aquella donde esta permanece constante; y dinámica, donde a pesar de ser conocida, varía a través del tiempo.<br>
+        •Esto genera los siguientes modelos:Inventarios con demanda determinística estática</p>
+      <p>Consideramos que la demanda se conoce con certeza y es siempre la misma</p>
+      <p>•Modelos de cantidad económica de pedido (EOQ – clásico): Conocido también como el modelo Harris – Wilson, el método EOQ busca un equilibrio entre los costos de preparación y los costos de almacenamiento</p>
+      <p>•EOQ con descuentos por cantidad: Considera la disminución del costo de compra de un artículo cuando se compra en gran cantidad.</p>
+      <p>•EOQ con faltantes planeados: Plantea que durante un tiempo la demanda no será satisfecha generando faltantes.</p>
+      <p><strong>Inventarios con demanda determinística dinámica</strong></p>
+      <p>•Lote por lote: Consiste en obtener justamente lo que necesito, lo que conlleva a tener el inventario exacto requerido y con él un bajo costo de mantenimiento.</p>
+      <p>•Período constante: Fija arbitrariamente los intervalos de pedido.</p>
+      <p>•Cantidad económica de pedido (EOQ): El EOQ también puede ser usado para determinar el tamaño de un lote</p>
+      <p><strong>Ejercicio</strong></p>
+      <p>Una empresa dedicada a la distribución de electrodomésticos, adquiere y luego vende un modelo de lavadora de la que anualmente distribuye 100 unidades. El costo de tener una lavadora almacenada 1 año es de 20,000 dlls/unidad, en las que se incluye el coste financiero de la inmovilización de recursos. con cada pedido de lavadoras el fabricante incurre en un coste de 10,000 dlls/unidad, cada lavadora tiene un costo unitario de $500, se desea saber:</p>
+      <p>• A) Cuantas lavadoras se deben solicitar en cada pedido<br>
+        • B) Cuantos pedidos se debe realizar al año</p>
+      <p><strong>Datos:</strong>K= costo de preparación para ordenar un loteC= costo unitario de producir o comprar cada unidadh= costo de mantener el inventario por unidad, por unidad de tiempo. (costo de conservación) &nbsp;</p>
+      <strong><img src="../Imagenes/OPERACIONES 5 2.1.png" width="504" height="207" alt=""/><img src="../Imagenes/OPERACIONES 5 2.2.png" width="523" height="264" alt=""/></strong>
+            `,
+      unidad6: `
+ <h1>UNIDAD 6- LINEA DE ESPERA&nbsp;</h1>
+      <h3>
+        <!-- Tagline -->
+        6.1 DEFINICIONES, CARACTERISTICASY SUPOSISIONES</h3>
+      <h3>&nbsp;<strong>Teoría de colas.</strong>&nbsp;</h3>
+      <h3>La teoría de colas es una disciplina, dentro de la investigación operativa, que tiene por objeto el estudio y análisis de situaciones en las que existen ente que demandan cierto servicio, de tal forma que dicho servicio no puede ser satisfecho instantáneamente, por lo cual se provocan esperas.&nbsp;</h3>
+      <h3><strong>Características:&nbsp;</strong></h3>
+      <h3>Existen dos clases básicas de tiempo entre llegadas:&nbsp;</h3>
+      <h3><strong>Determinístico:</strong> En el cual clientes sucesivos llegan en un mismo intervalo de tiempo, fijo y conocido. Un ejemplo clásico es el de una línea de ensamble, en donde los artículos llegan a una estación en intervalos invariables de tiempo (conocido como ciclos de tiempo).&nbsp;</h3>
+      <h3><strong>Probabilístico:</strong> En el cual el tiempo entre llegadas sucesivas es incierto y variable. Los tiempos entre llegadas probabilísticos se describen mediante una distribución de probabilidad.&nbsp;</h3>
+      <h3><strong>*Nota*</strong> En el caso probabilístico, la determinación de la distribución real, a menudo, resulta difícil. Sin embargo, una distribución, la distribución exponencial, ha probado ser confiable en muchos de los problemas prácticos.&nbsp;</h3>
+      <h3><strong>Supuestos:</strong>&nbsp;</h3>
+      <h3>1) El sistema de cola existe siempre y cuando, el número de entidades es mayor al número de servidores. <br>
+        2) La tasa de llegada (ʎ) y la tasa de servicio (µ) deben darse en proceso poissoniano, es decir las llegadas se da según la distribución poisson y el tiempo de servicios sigue una distribución exponencial. <br>
+        3) La tasa de servicio de un sistema debe ser menor que la tasa de llegada del mismo, de lo contrario el sistema colapsa. µ &gt; ʎ&nbsp;</h3>
+      <h3><strong>Clasificación de los sistemas de cola</strong>&nbsp;</h3>
+      <h3>Existen 2 tipos de sistemas de colas:&nbsp;</h3>
+      <h3><strong>Sistema básico:</strong> Es aquel donde existe una población, un sistema de llegada, además existe solo un sistema de cola y de servicio (sin importar en número de colas, ni el número de servidores). Es decir, en este sistema las entidades al recibir el servicio salen del sistema y no ingresan a otro.&nbsp;</h3>
+<h3><strong>Sistema multifase o en cascada:</strong> A diferencia del sistema básico el sistema multifase es aquel donde existe un conjunto de sistemas interconectados. Existe una población, un sistema de llegada, y existe más de un sistema de cola y de servicio (sin importar en número de colas, ni el número de servidores) con relación entre ellos. Es decir, en este sistema las entidades al recibir el servicio salen del sistema e ingresan uno o mas sistemas de cola y servicio, que pueden o no tener las mismas características.</h3>
+<h3>6.2 TERMINOLOGIA Y NOTACION&nbsp;</h3>
+<p>&nbsp; <strong>características operativas.</strong>&nbsp;</p>
+<p>&nbsp;<strong>Medidas de desempeño</strong> para una línea de espera que incluyen la probabilidad de que no haya unidades en el sistema, la cantidad promedio en la línea, el tiempo de espera promedio, etc.&nbsp;</p>
+<p><strong>Operación de estado estable</strong> Operación normal de la línea de espera después de que ha pasado por un periodo inicial o transitorio. Las características operativas de las líneas de espera se calculan para condiciones de estado estable.&nbsp;</p>
+<p><strong>Tasa media de llegada</strong> .- Cantidad promedio de clientes o unidades que llegan en un periodo dado.&nbsp;</p>
+<p><strong>Tasa media de servicio</strong>. - Cantidad promedio de clientes o unidades que puede atender una instalación de servicio en un periodo dado.&nbsp;</p>
+<p><strong>Línea de espera de canales múltiples.</strong> - Línea de espera con dos o más instalaciones deservicio paralelas.&nbsp;</p>
+<p><strong>Bloqueado</strong>. - Cuando las unidades que llegan no pueden entrar a la línea de espera debido a que el sistema está lleno. Las unidades bloqueadas pueden ocurrir cuando no se permiten las líneas de espera o cuando las líneas de espera tienen una capacidad finita.&nbsp;</p>
+<p><strong>Población infinita.</strong> - Población de clientes o unidades que pueden buscar servicio, no tiene un límite superior especificado.&nbsp;</p>
+<p><strong>Población finita.</strong> - Población de clientes o unidades que pueden buscar servicio, tiene un valor fijo y finito. Usualmente siempre es común utilizar la siguiente terminología estándar : nomenclatura&nbsp;</p>
+<p>a= La distribución de tiempo entre llegadas. <br>
+  b= La distribución de tiempo de servicio. <br>
+  c= El número de servidores en paralelo. <br>
+  d= Tipo de disciplina en el servicio (FCFS, LCFS, SIRO, PRIORIDAD). <br>
+  e= Número máximo admitido en el sistema (línea de espera + en servicio). <br>
+  f= Tamaño de la población de donde se extrae los clientes.&nbsp;</p>
+<p>Para reemplazar a los símbolos a y b se usan las siguientes iniciales:&nbsp;</p>
+<p><strong>M</strong> = Cuando el tiempo de llegada o servicio tiene una distribución exponencial entrada o salida de Poisson (o Markoviana).&nbsp;</p>
+<p><strong>D</strong>= Cuando el tiempo de llegada o servicio es determinista&nbsp;</p>
+<p><strong>Ek</strong> = Cuando el tiempo de llegada o servicio tiene una distribución de Erlangs con parámetro K.&nbsp;</p>
+<p><strong>G</strong> = Cuando el tiempo de llegada o servicio tiene una distribución general (cualquier distribución arbitraria)&nbsp;</p>
+<p>Como observamos los elementos básicos para crear un modelo de línea de espera, dependerá de los siguientes factores:&nbsp;</p>
+<p>Distribución de llegadas. (Individuales o en grupo). <br>
+  Distribución de servicio. (Individuales o en grupo). <br>
+  Diseño de la instalación (estaciones en serie, paralelo, o en red) <br>
+  Disciplina de servicio Tamaño de la línea (finita o infinita) <br>
+  Fuente de los clientes (finita o infinita) ejemplo</p>
+<strong><img src="../Imagenes/OPERACIONES 6 2.1.jpg" width="718" height="656" alt=""/></strong>
+<h3>6.3 MODELOS DE POISSON&nbsp;</h3>
+<p>&nbsp;Para una única variable independiente X, es un modelo de la forma: O, para simplificar la notación, simplemente:&nbsp;</p>
+<p>Donde ln significa logaritmo neperiano, a0 y a1 son constantes y X una variable que puede ser aleatoria o no, continúa o discreta.&nbsp;</p>
+<p>Este modelo se puede fácilmente generalizar para k variables independientes:&nbsp;</p>
+<p>Por lo tanto a 0&nbsp;</p>
+<p>es el logaritmo de l (probabilidad de que ocurra un evento en un intervalo de tamaño unidad) cuando todas las variables independientes son cero, y ai es el cambio en el logaritmo de l (o logaritmo del cociente de l )&nbsp;</p>
+<p>Cuando la variable Xi aumenta una unidad, manteniéndose constantes las demás o, dicho de otro modo, es la probabilidad de que ocurra un evento en un intervalo unidad cuando todas las variables independientes son cero y l el cociente de dicha probabilidad para un aumento de una unidad en la variable Xi (riesgo relativo).&nbsp;</p>
+<p>Obsérvese que, al igual que en la regresión logística, el modelo supone efectos multiplicativos, es decir, si la variable Xi aumenta n unidades, la probabilidad para la variable de Poisson se multiplica por es decir, la potencia n-ésima.&nbsp;</p>
+<p><strong>Definición:</strong> Sea n la variable aleatoria discreta que mide el número de clientes que llegan a un sistema de líneas de espera, entonces la probabilidad de que n = k está dada por:</p>
+<p>&nbsp;( ) () Donde λ es el promedio de éxitos en la unidad de tiempo.&nbsp;</p>
+<p><strong>Teorema.</strong> La esperanza matemática y la varianza de esta función de distribución está dada por:&nbsp;</p>
+<p>E(n)= λ t V(n)= λ t&nbsp;</p>
+<p><strong>La distribución de Poisson</strong> es una distribución de probabilidad discreta que expresa, a partir de una frecuencia de ocurrencia media, la probabilidad que ocurra un determinado número de eventos durante cierto periodo de tiempo.&nbsp;</p>
+<p><strong>Propiedades:</strong> La función de masa de la distribución de Poisson es donde k es el número de ocurrencias del evento o fenómeno (la función nos da la probabilidad de que el evento suceda precisamente k veces).</p>
+<p>&nbsp;λ es un parámetro positivo que representa el número de veces que se espera que ocurra el fenómeno durante un intervalo dado. Por ejemplo, si el suceso estudiado tiene lugar en promedio 4 veces por minuto y estamos interesados en la probabilidad de que ocurra k veces dentro de un intervalo de 10 minutos, usaremos un modelo de distribución de Poisson con λ = 10×4 = 40.</p>
+<h3>6.4 PROCESO DE NACIMIENTO Y MUERTE&nbsp;</h3>
+<p>&nbsp;La mayor parte de los modelos elementales de colas suponen que las entradas (llegada de clientes) y las salidas (clientes que se van) del sistema ocurren de acuerdo con un proceso de nacimiento y muerte. Este importante proceso de teoría de probabilidad tiene aplicaciones en varias áreas. Sin embargo, en el contexto de la teoría de colas, el termino nacimiento se refiere a la llegada de un nuevo cliente al sistema de colas, mientras que el termino muerte se refiere a la salida del cliente servido. <br>
+  El estado del sistema en el tiempo t (t ≥ 0), denotado por N (t), es el número de clientes que hay en el sistema de colas en el tiempo t. El proceso de nacimiento y muerte describe en términos probabilísticos como cambia N (t) al aumentar t. En general, sostiene que los nacimientos y muertes individuales ocurren de manera aleatoria, y que sus tasas medias de ocurrencia dependen del estado actual del sistema. De manera más precisa, los supuestos del proceso de nacimiento y muerte son los siguientes:&nbsp;</p>
+<p><strong>Supuesto 1</strong> <br>
+  Dado N (t) = n, la distribución de probabilidad actual del tiempo que falta para el próximo nacimiento (llegada) es exponencial con parámetro λ n (n 50, 1, 2,. . .).&nbsp;</p>
+<p><strong>Supuesto 2 </strong><br>
+  Dado N (t) = n, la distribución de probabilidad actual del tiempo que falta para la próxima muerte (terminación de servicio) es exponencial con parámetro µn (n = 1, 2,. . .).&nbsp;</p>
+<p><strong>Supuesto 3</strong> La variable aleatoria del supuesto 1 (el tiempo que falta hasta el próximo nacimiento) y la variable aleatoria del supuesto 2 (el tiempo que falta hasta la siguiente muerte) son mutuamente independientes. La siguiente transición del estado del proceso es n→ n + 1 (un solo nacimiento) o n→ n - 1 (una sola muerte), lo que depende de cuál de las dos variables es más pequeña.&nbsp;</p>
+<p>En el caso de un sistema de colas, λ n y µn representan, respectivamente, la tasa media de llegada y la tasa media de terminaciones de servicio, cuando hay n clientes en el sistema. En algunos sistemas de colas, los valores de las λ n serán las mismas para todos los valores de n, y las µn también serán las mismas para toda n excepto para aquella n tan pequeña que el servidor este desocupado (es decir, n = 0). Sin embargo, las λ n y las y µn también pueden variar en forma considerable con n para algunos sistemas de colas. Por ejemplo, una de las formas en las que λ n puede ser diferente para valores distintos de n es si los clientes potenciales que llegan se pueden perder (rechazar la entrada al sistema) con mayor probabilidad a medida que n aumenta. De manera similar, µn puede ser diferente ante valores distintos de n debido a que existe una mayor probabilidad de que los clientes renuncien (se vayan sin haber sido servidos) a medida que aumenta el tamaño de la cola.&nbsp;</p>
+<p><strong>Distribución de llegadas:</strong> Definir el proceso de llegada para una línea de espera implica determinar la distribución de probabilidad para la cantidad de llegadas en un periodo dado. Para muchas situaciones de línea de espera, cada llegada ocurre aleatoria e independientemente de otras llegadas y no podemos predecir cuándo ocurrirá. En tales casos, los analistas cuantitativos has encontrado que la distribución de probabilidad de Poisson proporciona una buena descripción del patrón de llegadas. La función de probabilidad de Poisson proporciona la probabilidad de x llegadas en un periodo específico. La función de probabilidad es como sigue: P(x)=µx e^- λ / x! Para x= 0, 1, 2,…&nbsp;</p>
+<p><strong>Modelo de nacimiento puro</strong>&nbsp;</p>
+<p>Defina p0 (t) = Probabilidad de que no ocurran llegadas durante un periodo de tiempo t. Dado que el tiempo entre llegadas es exponencial y que la tasa de llegadas es de λ clientes por unidad de tiempo, entonces:</p>
+<strong><img src="../Imagenes/OPERACIONES 6 4.1.jpg" width="258" height="108" alt=""/></strong>
+<p>&nbsp;Para un intervalo de tiempo suficientemente pequeño h &gt; 0, tenemos:</p>
+<img src="../Imagenes/OPERACIONES 6 4.2.jpg" width="443" height="54" alt=""/>
+<p>&nbsp;<strong>La distribución exponencial</strong> se basa en la suposición de que durante h &gt; 0, cuando mucho puede ocurrir un evento (llegada).&nbsp;</p>
+<p>Por lo tanto, a medida que h→ 0,p1 (h) = 1 - p0 (h)≈ λ h.&nbsp;</p>
+<p>Este resultado muestra que la probabilidad de una llegada durante h es directamente proporcional a h, con la tasa de llegadas, λ, como constante de proporcionalidad. Para derivar la distribución de la cantidad de llegadas durante un periodo t cuando el tiempo entre llegadas es exponencial con media 1/ λ Defina pn(t) = Probabilidad de n llegadas durante t.&nbsp;</p>
+<p>Para un h &gt; 0 suficientemente pequeño:</p>
+<img src="../Imagenes/OPERACIONES 6 4.3.jpg" width="253" height="62" alt=""/>
+<p>En la primera ecuación habrá n llegadas durante t + h si hay n llegadas durante t y ninguna llegada durante h, o n - 1 llegadas durante t y una llegada durante h. No se permiten todas las demás combinaciones porque, de acuerdo con la distribución exponencial, a lo sumo puede haber una llegada durante un periodo h muy pequeño. La ley del producto de las probabilidades es aplicable al lado derecho de la ecuación porque las llegadas son independientes. En cuando a la segunda ecuación, durante t + h puede haber cero llegadas sólo si no hay llegadas durante t y h. Reacomodando los términos y tomando los límites a medida que h→0 para obtener la primera derivada de pn(t) con respecto a t, tenemos:&nbsp;</p>
+<img src="../Imagenes/OPERACIONES 6 4.4.jpg" width="398" height="123" alt=""/>
+<p>Ésta es una distribución de Poisson con media de llegadas durante t. El resultado anterior muestra que si el tiempo entre llegadas es exponencial con media 1/ λ, entonces la cantidad de llegadas durante un periodo específico t es Poisson con media λ t. Lo contrario también funciona. La siguiente tabla resume las relaciones entre las distribuciones exponenciales y de Poisson, dada la tasa de llegadas λ.&nbsp;</p>
+<img src="../Imagenes/OPERACIONES 6 4.5.jpg" width="451" height="141" alt=""/>
+<p><strong>Modelo de muerte pura</strong>&nbsp;</p>
+<p>En el modelo de muerte pura, el sistema se inicia con N clientes en el instante 0, sin llegadas nuevas permitidas. Las salidas ocurren a razón de m clientes por unidad de tiempo. Para desarrollar las ecuaciones diferenciales de la probabilidad pn(t) de que n clientes permanezcan después de t unidades de tiempo, seguimos los argumentos utilizados con el modelo de nacimiento puro. Por lo tanto:&nbsp;</p>
+<img src="../Imagenes/OPERACIONES 6 4.6.jpg" width="475" height="213" alt=""/>
+<p>Ejemplo: Una florería inicia cada semana con 18 docenas de rosas. En promedio, la florería vende 3 docenas al día (una docena a la vez), pero la demanda real sigue una distribución de Poisson. Siempre que el nivel de las existencias se reduce a 5 docenas, se coloca un nuevo pedido de 18 nuevas docenas para entrega al principio de la siguiente semana. Debido a la naturaleza de la mercancía, las rosas sobrantes al final de la semana se desechan.&nbsp;</p>
+<p>Determine lo siguiente:&nbsp;</p>
+<p>(a) La probabilidad de colocar un pedido cualquier día de la semana. <br>
+  (b) El promedio de rosas desechadas al final de la semana.&nbsp;</p>
+<p>Debido a que las compras ocurren a razón de µ = 3 docenas por día, la probabilidad de colocar un pedido al final del día t es&nbsp;</p>
+<p><img src="../Imagenes/OPERACIONES 6 4.7.jpg" width="309" height="97" alt=""></p>
+<p><strong>Conclusión:&nbsp;</strong></p>
+<p>En la teoría de colas, el termino nacimiento se refiere a la entrada de un nuevo cliente, y el termino muerte se refiere a la salida del cliente servido. Esto nos sirve para conocer cuál es la probabilidad de que ocurran nuevos nacimientos en un determinado espacio de tiempo. Los nacimientos y muertes por lo general se dan de manera aleatoria, y sus tasas de ocurrencia dependen del sistema.&nbsp;</p>
+<h3>6.5 ANALISIS DE COSTO&nbsp;</h3>
+<p>El Análisis De Costo es el proceso de identificación de los recursos necesarios para llevar a cabo la labor o proyecto. El análisis de costo determina la calidad y cantidad de recursos necesarios.&nbsp;</p>
+<p>Entre otros factores, analiza el costo del proyecto en términos de dinero. Con frecuencia, se supone que se cuenta con los recursos necesarios y que el costo es tan bajo que no es necesario realizar el análisis. Sin embargo, puede ocurrir que, una vez que el proyecto esté marchando los costos de utensilios, el equipo, los materiales y la mano de obra especializada que se requiere para completarlo no están disponibles.&nbsp;</p>
+<p>También puede ocurrir que se haya completado el proyecto, (en este caso un pozo de agua) y todos los participantes han ignorado la necesidad de adquirir los repuestos necesarios para la bomba. Varios meses después de finalizar el proyecto la bomba falla y no se tienen los repuestos adecuados para arreglarla.&nbsp;</p>
+<p><strong>Componentes del costo</strong>&nbsp;</p>
+<p>El costo de producción de una empresa puede subdividirse en los siguientes elementos: alquileres, salarios y jornales, la depreciación de los bienes de capital (maquinaria y equipo, etc.), el costo de la materia prima, los intereses sobre el capital de operaciones, seguros, contribuciones y otros gastos misceláneos. Los diferentes tipos de costos pueden agruparse en dos categorías: costos fijos y costos variables.&nbsp;</p>
+<p><strong>Costos fijos</strong>&nbsp;</p>
+<p>Los costos fijos son aquellos en que necesariamente tiene que incurrir la empresa al iniciar sus operaciones. Se definen como costos porque en el plazo corto e intermedio se mantienen constantes a los diferentes niveles de producción. Como ejemplo de estos costos fijos se identifican los salarios de ejecutivos, los alquileres, los intereses, las primas de seguro, la depreciación de la maquinaria y el equipo y las contribuciones sobre la propiedad.&nbsp;</p>
+<p>El costo fijo total se mantendrá constante a los diferentes niveles de producción mientras la empresa se desenvuelva dentro de los límites de su capacidad productiva inicial. La empresa comienza las operaciones con una capacidad productiva que estará determinada por la planta, el equipo, la maquinaria inicial y el factor gerencial. Estos son los elementos esenciales de los costos fijos al comienzo de las operaciones.&nbsp;</p>
+<p>Hay que dejar claro, que los costos fijos pueden llegar a aumentar, obviamente si la empresa decide aumentar su capacidad productiva, cosa que normalmente se logra a largo plazo, por esta razón, el concepto costo fijo debe entenderse en términos de aquellos costos que se mantienen constantes dentro d0e un período de tiempo relativamente corto.&nbsp;</p>
+<p><strong>Costos variables</strong>&nbsp;</p>
+<p>Los costos variables son aquellos que varían al variar el volumen de producción. El costo variable total se mueve en la misma dirección del nivel de producción. El costo de la materia prima y el costo de la mano de obra son los elementos más importantes del costo variable.&nbsp;</p>
+<p>La decisión de aumentar el nivel de producción significa el uso de más materia prima y más obreros, por lo que el costo variable total tiende a aumentar la producción. Los costos variables son pues, aquellos que varían al variar la producción.&nbsp;</p>
+<p><br>
+  <strong> Otros refinamientos</strong>&nbsp;</p>
+<p>El vocabulario económico maneja cuatro conceptos de costos, derivados del concepto costo total, de gran importancia para el estudio de la teoría de la firma. Estos conceptos son el costo promedio total (CPT) el costo variable promedio (CVP) el costo fijo promedio (CFP) y el costo marginal (CMg).&nbsp;</p>
+<p>Cada uno de estos conceptos presenta una relación económica muy importante para el análisis del problema de la determinación del nivel de producción de máxima ventaja económica pera el empresario, por lo cual se recomienda familiarizarse con la abreviatura convencional, aceptada por los economistas, importante para la comprensión del tema.&nbsp;</p>
+<p><strong>Costo Marginal</strong>&nbsp;</p>
+<p>El costo marginal (CMg) permite al empresario observar los cambios ocurridos en el costo total de producción al emplear unidades adicionales de los factores variables de producción. El costo marginal es, por tanto una medida del costo adicional incurrido como consecuencia de un aumento en el volumen de producción. El costo marginal se define como el costo adicional incurrido como consecuencia de producir una unidad adicional del producto. Si al aumentar el volumen de producción en una unidad el costo total aumenta, el aumento absoluto en el costo total se toma como resultado del aumento absoluto en la producción. De ahí que aritméticamente, el costo marginal es el resultado de dividir el cambio absoluto en costo total entre el cambio absoluto en producción. Esta relación aritmética puede expresarse en los siguientes términos:</p>
+<p><strong>&nbsp;Costo promedio total</strong>&nbsp;</p>
+<p>Le indica al empresario el costo de producir una unidad del producto para cada nivel de producción, obteniendo la combinación más eficaz de los factores de producción, se obtiene matemáticamente dividiendo el costo total entre el número de unidades producidas a cada nivel de producción y se expresa de la siguiente forma:&nbsp;</p>
+<p><strong>Costo fijo Promedio</strong> Indica que el costo fijo por unidad se reduce a medida que aumentamos la producción, al distribuir un valor fijo entre un número mayor de unidades producidas el costo fijo por unidad tiene que reducirse.&nbsp;</p>
+<p><strong>Costo Variable Promedio</strong> Indica que en el punto más bajo de la curva el productor alcanza el nivel de producción de máxima eficacia productiva de los factores variables y cuando esta asciende señala la reducción de eficacia productiva que tiene lugar al aumentar la producción mediante el empleo de unidades adicionales de los factores variables, mientras se mantiene fija la capacidad productiva de la empresa. </p>
+<p><strong>Costo a corto plazo</strong> El análisis del costo en el corto plazo depende de dos proposiciones las cuales son: Las condiciones físicas de la producción y los precios unitarios de los insumos determinan el costo de producción correspondiente a cada nivel de producción posible.&nbsp;</p>
+<p><strong>El costo Total</strong> se puede dividir en dos componentes:&nbsp;</p>
+<p><strong>el costo fijo y el costo variable</strong>. Costo a largo Plazo En cuanto al largo plazo, el análisis introduce dos consideraciones importantes. Una de ella es la que tiene que ver con la capacidad productiva de las empresas que componen la industria.&nbsp;</p>
+<p>La segunda es la que tiene que ver con la capacidad productiva de todas las industrias y de sus consecuencias económicas para las empresas individuales.&nbsp;</p>
+<p><strong>Maximización de los beneficios de la empresa </strong>La decisión básica que toda empresa debe tomar es la cantidad que producirá. Esta decisión dependerá del precio al que pueda venderla y del costo de producción. En el proceso que toda empresa sigue para determinar la cantidad de producto que colocará en el mercado se guía por el deseo de maximizar los beneficios, definidos como la diferencia entre los ingresos totales y los costos totales:&nbsp;</p>
+<strong><img src="../Imagenes/OPERACIONES 6 5.1.jpg" width="279" height="141" alt=""/></strong>
+<p>&nbsp;En relación a esta expresión, caben tres posibilidades: <br>
+  Beneficios normales <br>
+  Beneficios extraordinarios <br>
+  Pérdidas.</p>
+      `,
+      unidad7: `
+<h1>UNIDAD 7- METODO DE TRANSPORTE</h1>
+      <h3 id="7.1">
+        <!-- Tagline -->
+        7.1 INTRODUCCION&nbsp;</h3>
+      <p>El problema de transporte tiene su origen en 1941, cuando F. L. Hithcock presentó un estudio llamado «La distribución de un producto desde diversos orígenes a numerosas localidades». Posteriormente en 1947 T. C. Koomans presentó un estudio sin relación con el de Hithcock, llamado «Utilización óptima del sistema de transporte» ambas aportaciones contribuyeron al desarrollo de los métodos de transporte que implican un número dado de orígenes y otros de destinos.&nbsp;</p>
+      <p>Aunque no todos los procesos de distribución pueden incluirse dentro del modelo general de la programación lineal, hay dos clases de problemas de características bien definidas y afines que pueden ser formulados y tratados dentro del marco de las relaciones lineales: el problema de transporte y el problema de asignación de recursos.&nbsp;</p>
+      <p>El problema consiste en decidir cuántas unidades trasladar desde ciertos puntos de origen (plantas, ciudades, etc.) a ciertos puntos de destino (centros de distribución, ciudades, etc.) de modo de minimizar los costos de transporte, dada la oferta y demanda en dichos puntos. Se suponen conocidos los costos unitarios de transporte, los requerimientos de demanda y la oferta disponible.&nbsp;</p>
+      <p>Los principales objetivos de un modelo de transporte son la satisfacción de todos los requerimientos establecidos por los destinos y claro está la minimización de los costos relacionados con el plan determinado por las rutas escogidas. El contexto en el que se aplica el modelo de transporte es amplio y puede generar soluciones atinentes al área de operaciones, inventario y asignación de elementos. &nbsp; </p>
+      <p>Cualquier modelo de transporte se compone de unidades de un bien a distribuir, m orígenes, n destinos, recursos en el origen, demandas en los destinos y costos de distribución por unidad. Adicionalmente, se tienen varios supuestos:&nbsp;</p>
+      <p>1. <strong>Supuesto de requerimientos:</strong> cada origen tiene un suministro fijo de unidades que se deben distribuir por completo entre los destinos.&nbsp;</p>
+      <p>2. <strong>Supuesto de costo:</strong> el costo de distribuir unidades de un origen a un destino cualquiera es directamente proporcional al número de unidades distribuidas.&nbsp;</p>
+      <p>3. <strong>Propiedad de soluciones factibles:</strong> un problema de transporte tiene soluciones factibles sólo si la sumatoria de recursos en los m orígenes es igual a la sumatoria de demandas en los destinos.&nbsp;</p>
+      <p>4. <strong>Propiedad de soluciones enteras:</strong> En los casos en los que tanto los recursos como las demandas toman un valor entero, todas las variables básicas (asignaciones), de cualquiera de las soluciones básicas factibles (inclusive la solución óptima), asumen también valores enteros. &nbsp;</p>
+      <p>Lo primero que se debe hacer es formular el problema en términos de programación lineal, para esto se necesita identificar las actividades y los requerimientos del problema para de esta forma formularlo como un problema de programación lineal. Después de formular el problema, el siguiente paso es obtener una solución básica factible, la cual se puede obtener a partir de cualquiera de los 3 criterios siguientes:&nbsp;</p>
+      <p>1. Regla de la esquina noroeste.&nbsp;</p>
+      <p>2. Método de la ruta preferente.&nbsp;</p>
+      <p>3. Método de aproximación de Vogel &nbsp;</p>
+      <h3 id="7.2">7.2 METODO DE APROXIMACION DE VOGEL</h3>
+      <h3>El método de aproximación de Vogel es un método heurístico de resolución de problemas de transporte, capaz de alcanzar una solución básica no artificial de inicio. <br>
+        Este modelo requiere de la realización de un número generalmente mayor de iteraciones que los demás métodos heurísticos existentes con este fin, sin embargo produce mejores resultados iniciales que los mismos.&nbsp;</h3>
+      <h3><strong>Algoritmo de Vogel&nbsp;</strong></h3>
+      <h3>El método consiste en la realización de un algoritmo que consta de 3 pasos fundamentales y 1 más que asegura el ciclo hasta la culminación del método.&nbsp;</h3>
+      <h3>Paso 1 Determinar para cada fila y columna una medida de penalización restando los dos costos menores en filas y columnas. &nbsp;</h3>
+      <h3>Paso 2 Escoger la fila o columna con la mayor penalización, es decir que de la resta realizada en el «Paso 1» se debe escoger el número mayor. En caso de haber empate, se debe escoger arbitrariamente (a juicio personal).&nbsp;</h3>
+      <h3>Paso 3 De la fila o columna de mayor penalización determinada en el paso anterior debemos de escoger la celda con el menor costo, y en esta asignar la mayor cantidad posible de unidades. Una vez se realiza este paso una oferta o demanda quedará satisfecha por ende se tachará la fila o columna, en caso de empate solo se tachará 1, la restante quedará con oferta o demanda igual a cero (0).&nbsp;</h3>
+      <h3>Paso 4: De ciclo y excepciones&nbsp;</h3>
+      <h3>● Si queda sin tachar exactamente una fila o columna con cero oferta o demanda, detenerse. <br>
+        ● Si queda sin tachar una fila o columna con oferta o demanda positiva, determine las variables básicas en la fila o columna con el método de costos mínimos, detenerse. <br>
+        ● Si todas las filas y columnas que no se tacharon tienen cero oferta y demanda, determine las variables básicas cero por el método del costo mínimo, detenerse. <br>
+        ● Si no se presenta ninguno de los casos anteriores vuelva al paso 1 hasta que las ofertas y las demandas se hayan agotado. </h3>
+      <p>Ejemplo de Método de aproximación de Vogel Por medio de este método resolveremos el ejercicio de transporte resuelto en módulos anteriores mediante programación lineal.</p>
+      <p>El problema Una empresa energética colombiana dispone de cuatro plantas de generación para satisfacer la demanda diaria eléctrica en cuatro ciudades, Cali, Bogotá, Medellín y Barranquilla. Las plantas 1,2,3 y 4 pueden satisfacer 80, 30, 60 y 45 millones de KW al día respectivamente. Las necesidades de las ciudades de Cali, Bogotá, Medellín y Barranquilla son de 70, 40, 70 y 35 millones de Kw al día respectivamente.&nbsp;</p>
+      <p>Los costos asociados al envío de suministro energético por cada millón de KW entre cada planta y cada ciudad son los registrados en la siguiente tabla. &nbsp;</p>
+      <strong><img src="../Imagenes/OPERACIONES 7 2.1.jpg" width="406" height="164" alt=""/></strong>
+      <p>El primer paso es determinar las medidas de penalización y consignarlas en el tabulado de costos, tal como se muestra a continuación.&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 7 2.2.jpg" width="670" height="194" alt=""/>
+      <p>El paso siguiente es escoger la mayor penalización, de esta manera:&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 7 2.3.jpg" width="580" height="268" alt=""/>
+      <p>El paso siguiente es escoger de esta columna el menor valor, y en una tabla paralela se le asigna la mayor cantidad posible de unidades, podemos observar como el menor costo es «2» y que a esa celda se le pueden asignar como máximo 60 unidades «que es la capacidad de la planta 3».&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 7 2.4.jpg" width="581" height="452" alt=""/>
+      <p>&nbsp;Dado que la fila de la «Planta 3» ya ha asignado toda su capacidad (60 unidades) esta debe desaparecer.</p>
+      <img src="../Imagenes/OPERACIONES 7 2.5.jpg" width="581" height="209" alt=""/>
+      <p>Se ha llegado al final del ciclo, por ende se repite el proceso&nbsp;</p>
+      <img src="../Imagenes/OPERACIONES 7 2.6.jpg" width="595" height="769" alt=""/>
+      <h3 id="7.3">7.3 EL ALGORITMO DE TRANSPORTE&nbsp;</h3>
+      <p>Se denomina algoritmo a un grupo finito de operaciones organizadas de manera lógica y ordenada que permite solucionar un determinado problema. Se trata de una serie de instrucciones o reglas establecidas que, por medio de una sucesión de pasos, permiten arribar a un resultado o solución. Según los expertos en matemáticas, los algoritmos permiten trabajar a partir de un estado básico o inicial y, tras seguir los pasos propuestos, llegar a una solución. <br>
+        Cabe resaltar que, si bien los algoritmos suelen estar asociados al ámbito matemático (ya que permiten, por citar casos concretos, averiguar el cociente entre un par de dígitos o determinar cuál es el máximo común divisor entre dos cifras pertenecientes al grupo de los enteros), aunque no siempre implican la presencia de números.&nbsp;&nbsp;</p>
+      <p>Además de todo lo expuesto, en el ámbito matemático, y cuando estamos decididos a llevar a cabo la descripción de uno de esos algoritmos hay que tener en cuenta que se puede efectuar mediante tres niveles. Así, en primer lugar, nos encontramos con el de alto nivel, lo que es la descripción formal y finalmente la tarea de implementación.</p>
+      <p>El modelo de transporte es un caso particular de los problemas referidos a la programación lineal. Trata situaciones de envío de productos de lugares llamados puntos origen (fuentes de abastecimiento) a los puntos destino (fuentes de consumo), siendo su objetivo, determinar las cantidades óptimas de envío de las fuentes de abastecimiento a las fuentes de consumo que minimicen el costo total del transporte, al mismo tiempo que satisfagan tanto los límites de la oferta como los requerimientos de la demanda.&nbsp;</p>
+      <p>El algoritmo de transporte organiza los cálculos en una forma más cómoda aprovechando la ventaja de la estructura especial del modelo de transporte. <br>
+        Pare esto sigue los mismos pasos que el método simplex, sin embargo en lugar de usar la tabla simplex normal se aprovecha la ventaja de la estructura especial del modelo de transporte para organizar los cálculos en una forma más cómoda. &nbsp;</p>
+      <p>Se debe agregar que el algoritmo especial de transporte fue desarrollado por primera vez cuando la norma eran los cálculos a mano y se necesitaba de soluciones con método abreviado. Hoy contamos con programas de cómputo que nos apoyan en la solución de los problemas que se presentan en la investigación de operaciones, sin embargo, el algoritmo además de su importancia histórica permite tener una perspectiva del uso de las relaciones teóricas primal-dual para llegar a un resultado práctico, de mejorar los cálculos a mano.</p>
+      <p>Otro detalle importante es que el algoritmo de transporte se basa en la hipótesis que el modelo esta balanceado y eso quiere decir que la demanda total es igual a la oferta total. Si el modelo está desbalanceado siempre se podrá aumentar con una fuente ficticia o destino ficticio para restaurar el equilibrio o balance.&nbsp;</p>
+      <p>Los pasos del algoritmo de transporte son exactamente iguales a los del algoritmo simplex. &nbsp;</p>
+      <p><strong>En el primer paso</strong> se determina una solución básica factible de inicio que nos ayude a proseguir en el paso dos. <br>
+        <strong>En el segundo paso</strong> se usa la condición de optimalidad del método simplex para determinar la variable de entrada entre todas las variables básicas. Detenerse si se satisface. <br>
+        <strong>En el tercer paso</strong> se usa la condición de factibilidad del método simplex para determinar la variable de salida y así obtener la nueva solución y posteriormente regresar al paso dos. También estudiaremos más acerca de los algoritmos de transporte pero ante quisiera recordarte algunos aspectos anteriores que seguro te serán de mucha utilidad. </p>
+      <p><strong>Problema de transporte:</strong> Consiste en decidir cuántas unidades trasladar desde ciertos puntos de origen (platas, ciudades, etc) a ciertos puntos de destino (centros de distribución, ciudades, etc) de modo de minimizar los costos de transporte, dada la oferta y demanda en dichos puntos.&nbsp;</p>
+      <p>Se suponen conocidos los costos unitarios de transporte, los requerimientos de demanda y la oferta disponible. Los principales objetivos de un modelo de transporte son la satisfacción de todos los requerimientos establecidos por los destinos y claro está la minimización de los costos relacionados con el plan determinado por las rutas escogidas. Cualquier modelo de transporte se compone de unidades de un bien a distribuir, m orígenes, n destinos, recursos en el origen, demandas en los destinos y costos de distribución por unidad. Adicionalmente, se tienen varios supuestos:&nbsp;</p>
+      <p><strong>Supuesto de requerimientos:</strong> cada origen tiene un suministro fijo de unidades que se deben distribuir por completo entre los destinos.&nbsp;</p>
+<p><strong>Supuesto de costo:</strong> el costo de distribuir unidades de un origen a un destino cualquiera es directamente proporcional al número de unidades distribuidas.&nbsp;</p>
+      <p><strong>Propiedad de soluciones factibles:</strong> un problema de transporte tiene soluciones factibles sólo si la sumatoria de recursos en los m orígenes es igual a la sumatoria de demandas en los destinos.&nbsp;</p>
+      <p><strong>Propiedad de soluciones enteras: </strong>En los casos en los que tanto los recursos como las demandas toman un valor entero, todas las variables básicas (asignaciones), de cualquiera de las soluciones básicas factibles (inclusive la solución óptima), asumen también valores enteros.&nbsp;</p>
+      <p>Lo primero que se debe hacer es formular el problema en términos de programación lineal para esto se necesita identificar las actividades y los requerimientos del problema para de esta forma formularlo como un problema de programación lineal. &nbsp;</p>
+      <p>Después de formular el problema, el siguiente paso es obtener una solución básica factible, la cual se puede obtener a partir de cualquiera de los 3 criterios siguientes:&nbsp;</p>
+      <p>1. Regla de la esquina noroeste. <br>
+        2. Método de la ruta preferente. <br>
+        3. Método de aproximación de Vogel.&nbsp;</p>
+      <p>● <strong>Regla de la esquina noroeste:</strong> la primera elección X11, es decir, se inicia la asignación por la esquina noroeste de tabla. Luego se desplaza a la columna de la derecha si todavía quedan recursos en ese origen. De lo contrario se mueve al reglo debajo hasta realizar todas las asignaciones. <br>
+      ● <strong>Método de la ruta preferente</strong>:se fundamenta en la asignación a partir del costo mínimo de distribuir una unidad. Primero se identifica este costo se realiza la asignación de recursos máxima posible y luego se identifica el siguiente costo menor realizando el mismo procedimiento hasta realizar todas las asignaciones. &nbsp;</p>  
+`	
+    };
+
+    const contenedor = document.getElementById("contenido-temario");
+    if (contenedor) {
+      contenedor.innerHTML = unidades[unidad] || "<p>Contenido no disponible.</p>";
+    }
+  }
+</script>
+</body>
+</html>
